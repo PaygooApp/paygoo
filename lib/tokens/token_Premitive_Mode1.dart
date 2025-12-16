@@ -66,7 +66,7 @@ class  {
     static const colorGray800 = Color(0xFF484848);
     static const colorGray900 = Color(0xFF2D2D2D);
     static const colorGray950 = Color(0xFF1E1E1E);
-    static const colorOpacityBlack64 = Color(0xA3000000);
+    static const colorOpacityBlack64 = Color(0xA1000000);
     static const colorPrimary100 = Color(0xFFCFFDE2);
     static const colorPrimary200 = Color(0xFF95FCBE);
     static const colorPrimary300 = Color(0xFF00D57B);
