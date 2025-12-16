@@ -192,7 +192,7 @@
     },
     "White": {
       "$type": "color",
-      "$value": "#fffff0"
+      "$value": "#ffffff"
     }
   },
   "Border radius": {
