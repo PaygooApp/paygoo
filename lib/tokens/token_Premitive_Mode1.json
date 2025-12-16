@@ -188,7 +188,7 @@
   "Base": {
     "Black": {
       "$type": "color",
-      "$value": "#000001"
+      "$value": "#000000"
     },
     "White": {
       "$type": "color",
