@@ -5,6 +5,10 @@ on:
     paths:
       - "lib/tokens/*.json"
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   generate-tokens:
     # Only run on PRs created by ZeroHeight
