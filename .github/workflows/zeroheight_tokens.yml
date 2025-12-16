@@ -3,7 +3,7 @@ name: Generate Design Tokens
 on:
   pull_request:
     paths:
-      - 'lib/tokens/*.json'
+      - "lib/tokens/*.json"
 
 jobs:
   generate-tokens:
@@ -21,8 +21,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
-          channel: 'stable'
+          channel: "stable"
           cache: true
 
       - name: Install dependencies
@@ -47,4 +46,3 @@ jobs:
           git add lib/tokens/*.dart
           git commit -m "chore: auto-generate Dart tokens from ZeroHeight JSON"
           git push
-
