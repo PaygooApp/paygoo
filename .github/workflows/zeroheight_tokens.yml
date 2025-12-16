@@ -1,3 +1,11 @@
+# TODO: Performance & Scalability Enhancements
+# - [ ] Replace Flutter setup with Dart SDK only (saves ~60-90s) - script doesn't need Flutter
+# - [ ] Consider Node.js script for zero setup time (Node pre-installed on runners)
+# - [ ] Add caching for Dart SDK and pub cache
+# - [ ] For large token sets, consider parallel processing of multiple JSON files
+# - [ ] Add timeout limits to prevent hanging on large files
+# - [ ] Consider self-hosted runners if token generation becomes frequent
+
 name: Generate Design Tokens
 
 on:
