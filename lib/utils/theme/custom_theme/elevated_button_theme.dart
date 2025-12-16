@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paygoo/tokens/token_primitive_mode1.dart';
 
 class TElevatedButtonTheme {
   TElevatedButtonTheme._();
@@ -7,18 +8,25 @@ class TElevatedButtonTheme {
   static final lightElevatedButtonTheme = ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       elevation: 0,
-      foregroundColor: Colors.white,
-      backgroundColor: Colors.blue,
-      disabledForegroundColor: Colors.grey,
-      disabledBackgroundColor: Colors.grey,
-      side: const BorderSide(color: Colors.blue),
-      padding: const EdgeInsets.symmetric(vertical: 18),
-      textStyle: const TextStyle(
-        fontSize: 16,
-        color: Colors.white,
+      foregroundColor: TokenPrimitiveMode1.basewhite,
+      backgroundColor: TokenPrimitiveMode1.primary500,
+      disabledForegroundColor: TokenPrimitiveMode1.gray400,
+      disabledBackgroundColor: TokenPrimitiveMode1.gray200,
+      side: const BorderSide(color: TokenPrimitiveMode1.primary500),
+      padding: EdgeInsets.symmetric(
+        vertical: TokenPrimitiveMode1.scale500.toDouble(),
+      ),
+      textStyle: TextStyle(
+        fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+        fontSize: TokenPrimitiveMode1.typographyfontSizebodylg.toDouble(),
+        color: TokenPrimitiveMode1.basewhite,
         fontWeight: FontWeight.w600,
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(
+          TokenPrimitiveMode1.borderRadiusmd.toDouble(),
+        ),
+      ),
     ),
   );
 
@@ -26,18 +34,25 @@ class TElevatedButtonTheme {
   static final darkElevatedButtonTheme = ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       elevation: 0,
-      foregroundColor: Colors.white,
-      backgroundColor: Colors.blue,
-      disabledForegroundColor: Colors.grey,
-      disabledBackgroundColor: Colors.grey,
-      side: const BorderSide(color: Colors.blue),
-      padding: const EdgeInsets.symmetric(vertical: 18),
-      textStyle: const TextStyle(
-        fontSize: 16,
-        color: Colors.white,
+      foregroundColor: TokenPrimitiveMode1.basewhite,
+      backgroundColor: TokenPrimitiveMode1.primary500,
+      disabledForegroundColor: TokenPrimitiveMode1.gray600,
+      disabledBackgroundColor: TokenPrimitiveMode1.gray800,
+      side: const BorderSide(color: TokenPrimitiveMode1.primary500),
+      padding: EdgeInsets.symmetric(
+        vertical: TokenPrimitiveMode1.scale500.toDouble(),
+      ),
+      textStyle: TextStyle(
+        fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+        fontSize: TokenPrimitiveMode1.typographyfontSizebodylg.toDouble(),
+        color: TokenPrimitiveMode1.basewhite,
         fontWeight: FontWeight.w600,
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(
+          TokenPrimitiveMode1.borderRadiusmd.toDouble(),
+        ),
+      ),
     ),
   );
 }

@@ -1,128 +1,211 @@
 import 'package:flutter/material.dart';
+import 'package:paygoo/tokens/token_primitive_mode1.dart';
 
 class TTextTheme {
   TTextTheme._();
 
   static TextTheme lightTextTheme = TextTheme(
-    headlineLarge: const TextStyle().copyWith(
-      fontSize: 32.0,
-      fontWeight: FontWeight.bold,
-      color: Colors.black,
+    headlineLarge: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlexl.toDouble(),
+      fontWeight: FontWeight.w700,
+      height:
+          TokenPrimitiveMode1.typographylineHeightheadingxl /
+          TokenPrimitiveMode1.typographyfontSizetitlexl,
+      color: TokenPrimitiveMode1.gray900,
     ),
-    headlineMedium: const TextStyle().copyWith(
-      fontSize: 24.0,
+    headlineMedium: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlelg.toDouble(),
       fontWeight: FontWeight.w600,
-      color: Colors.black,
+      height:
+          TokenPrimitiveMode1.typographylineHeightheadinglg /
+          TokenPrimitiveMode1.typographyfontSizetitlelg,
+      color: TokenPrimitiveMode1.gray900,
     ),
-    headlineSmall: const TextStyle().copyWith(
-      fontSize: 18.0,
+    headlineSmall: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlemd.toDouble(),
       fontWeight: FontWeight.w600,
-      color: Colors.black,
+      height:
+          TokenPrimitiveMode1.typographylineHeightheadingmd /
+          TokenPrimitiveMode1.typographyfontSizetitlemd,
+      color: TokenPrimitiveMode1.gray900,
     ),
-
-    titleLarge: const TextStyle().copyWith(
-      fontSize: 16.0,
+    titleLarge: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlesm.toDouble(),
       fontWeight: FontWeight.w600,
-      color: Colors.black,
+      height:
+          TokenPrimitiveMode1.typographylineHeightheadingsm /
+          TokenPrimitiveMode1.typographyfontSizetitlesm,
+      color: TokenPrimitiveMode1.gray900,
     ),
-    titleMedium: const TextStyle().copyWith(
-      fontSize: 16.0,
+    titleMedium: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlesm.toDouble(),
       fontWeight: FontWeight.w500,
-      color: Colors.black,
+      height:
+          TokenPrimitiveMode1.typographylineHeightheadingsm /
+          TokenPrimitiveMode1.typographyfontSizetitlesm,
+      color: TokenPrimitiveMode1.gray900,
     ),
-    titleSmall: const TextStyle().copyWith(
-      fontSize: 16.0,
+    titleSmall: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlexs.toDouble(),
       fontWeight: FontWeight.w400,
-      color: Colors.black,
+      height:
+          TokenPrimitiveMode1.typographylineHeightheadingxs /
+          TokenPrimitiveMode1.typographyfontSizetitlexs,
+      color: TokenPrimitiveMode1.gray900,
     ),
-
-    bodyLarge: const TextStyle().copyWith(
-      fontSize: 14.0,
+    bodyLarge: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+      fontSize: TokenPrimitiveMode1.typographyfontSizebodylg.toDouble(),
       fontWeight: FontWeight.w500,
-      color: Colors.black,
+      height:
+          TokenPrimitiveMode1.typographylineHeightbodylg /
+          TokenPrimitiveMode1.typographyfontSizebodylg,
+      color: TokenPrimitiveMode1.gray900,
     ),
-    bodyMedium: const TextStyle().copyWith(
-      fontSize: 14.0,
-      fontWeight: FontWeight.normal,
-      color: Colors.black,
+    bodyMedium: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+      fontSize: TokenPrimitiveMode1.typographyfontSizebodysm.toDouble(),
+      fontWeight: FontWeight.w400,
+      height:
+          TokenPrimitiveMode1.typographylineHeightbodysm /
+          TokenPrimitiveMode1.typographyfontSizebodysm,
+      color: TokenPrimitiveMode1.gray900,
     ),
-    bodySmall: const TextStyle().copyWith(
-      fontSize: 14.0,
+    bodySmall: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+      fontSize: TokenPrimitiveMode1.typographyfontSizebodymd.toDouble(),
       fontWeight: FontWeight.w500,
-      color: Colors.black.withOpacity(0.5),
+      height:
+          TokenPrimitiveMode1.typographylineHeightbodymd /
+          TokenPrimitiveMode1.typographyfontSizebodymd,
+      color: TokenPrimitiveMode1.gray600,
     ),
-
-    labelLarge: const TextStyle().copyWith(
-      fontSize: 12.0,
-      fontWeight: FontWeight.normal,
-      color: Colors.black,
+    labelLarge: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+      fontSize: TokenPrimitiveMode1.typographyfontSizebodyxs.toDouble(),
+      fontWeight: FontWeight.w400,
+      height:
+          TokenPrimitiveMode1.typographylineHeightbodyxs /
+          TokenPrimitiveMode1.typographyfontSizebodyxs,
+      color: TokenPrimitiveMode1.gray900,
     ),
-    labelMedium: const TextStyle().copyWith(
-      fontSize: 12.0,
-      fontWeight: FontWeight.normal,
-      color: Colors.black.withOpacity(0.5),
+    labelMedium: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+      fontSize: TokenPrimitiveMode1.typographyfontSizebodyxs.toDouble(),
+      fontWeight: FontWeight.w400,
+      height:
+          TokenPrimitiveMode1.typographylineHeightbodyxs /
+          TokenPrimitiveMode1.typographyfontSizebodyxs,
+      color: TokenPrimitiveMode1.gray600,
     ),
   );
 
   /// Customizable Dark Text Theme
   static TextTheme darkTextTheme = TextTheme(
-    headlineLarge: const TextStyle().copyWith(
-      fontSize: 32.0,
-      fontWeight: FontWeight.bold,
-      color: Colors.white,
+    headlineLarge: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlexl.toDouble(),
+      fontWeight: FontWeight.w700,
+      height:
+          TokenPrimitiveMode1.typographylineHeightheadingxl /
+          TokenPrimitiveMode1.typographyfontSizetitlexl,
+      color: TokenPrimitiveMode1.basewhite,
     ),
-    headlineMedium: const TextStyle().copyWith(
-      fontSize: 24.0,
+    headlineMedium: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlelg.toDouble(),
       fontWeight: FontWeight.w600,
-      color: Colors.white,
+      height:
+          TokenPrimitiveMode1.typographylineHeightheadinglg /
+          TokenPrimitiveMode1.typographyfontSizetitlelg,
+      color: TokenPrimitiveMode1.basewhite,
     ),
-    headlineSmall: const TextStyle().copyWith(
-      fontSize: 18.0,
+    headlineSmall: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlemd.toDouble(),
       fontWeight: FontWeight.w600,
-      color: Colors.white,
+      height:
+          TokenPrimitiveMode1.typographylineHeightheadingmd /
+          TokenPrimitiveMode1.typographyfontSizetitlemd,
+      color: TokenPrimitiveMode1.basewhite,
     ),
-
-    titleLarge: const TextStyle().copyWith(
-      fontSize: 16.0,
+    titleLarge: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlesm.toDouble(),
       fontWeight: FontWeight.w600,
-      color: Colors.white,
+      height:
+          TokenPrimitiveMode1.typographylineHeightheadingsm /
+          TokenPrimitiveMode1.typographyfontSizetitlesm,
+      color: TokenPrimitiveMode1.basewhite,
     ),
-    titleMedium: const TextStyle().copyWith(
-      fontSize: 16.0,
+    titleMedium: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlesm.toDouble(),
       fontWeight: FontWeight.w500,
-      color: Colors.white,
+      height:
+          TokenPrimitiveMode1.typographylineHeightheadingsm /
+          TokenPrimitiveMode1.typographyfontSizetitlesm,
+      color: TokenPrimitiveMode1.basewhite,
     ),
-    titleSmall: const TextStyle().copyWith(
-      fontSize: 16.0,
+    titleSmall: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlexs.toDouble(),
       fontWeight: FontWeight.w400,
-      color: Colors.white,
+      height:
+          TokenPrimitiveMode1.typographylineHeightheadingxs /
+          TokenPrimitiveMode1.typographyfontSizetitlexs,
+      color: TokenPrimitiveMode1.basewhite,
     ),
-
-    bodyLarge: const TextStyle().copyWith(
-      fontSize: 14.0,
+    bodyLarge: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+      fontSize: TokenPrimitiveMode1.typographyfontSizebodylg.toDouble(),
       fontWeight: FontWeight.w500,
-      color: Colors.white,
+      height:
+          TokenPrimitiveMode1.typographylineHeightbodylg /
+          TokenPrimitiveMode1.typographyfontSizebodylg,
+      color: TokenPrimitiveMode1.basewhite,
     ),
-    bodyMedium: const TextStyle().copyWith(
-      fontSize: 14.0,
-      fontWeight: FontWeight.normal,
-      color: Colors.white,
+    bodyMedium: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+      fontSize: TokenPrimitiveMode1.typographyfontSizebodysm.toDouble(),
+      fontWeight: FontWeight.w400,
+      height:
+          TokenPrimitiveMode1.typographylineHeightbodysm /
+          TokenPrimitiveMode1.typographyfontSizebodysm,
+      color: TokenPrimitiveMode1.basewhite,
     ),
-    bodySmall: const TextStyle().copyWith(
-      fontSize: 14.0,
+    bodySmall: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+      fontSize: TokenPrimitiveMode1.typographyfontSizebodymd.toDouble(),
       fontWeight: FontWeight.w500,
-      color: Colors.white.withOpacity(0.5),
+      height:
+          TokenPrimitiveMode1.typographylineHeightbodymd /
+          TokenPrimitiveMode1.typographyfontSizebodymd,
+      color: TokenPrimitiveMode1.gray400,
     ),
-
-    labelLarge: const TextStyle().copyWith(
-      fontSize: 12.0,
-      fontWeight: FontWeight.normal,
-      color: Colors.white,
+    labelLarge: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+      fontSize: TokenPrimitiveMode1.typographyfontSizebodyxs.toDouble(),
+      fontWeight: FontWeight.w400,
+      height:
+          TokenPrimitiveMode1.typographylineHeightbodyxs /
+          TokenPrimitiveMode1.typographyfontSizebodyxs,
+      color: TokenPrimitiveMode1.basewhite,
     ),
-    labelMedium: const TextStyle().copyWith(
-      fontSize: 12.0,
-      fontWeight: FontWeight.normal,
-      color: Colors.white.withOpacity(0.5),
+    labelMedium: TextStyle(
+      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+      fontSize: TokenPrimitiveMode1.typographyfontSizebodyxs.toDouble(),
+      fontWeight: FontWeight.w400,
+      height:
+          TokenPrimitiveMode1.typographylineHeightbodyxs /
+          TokenPrimitiveMode1.typographyfontSizebodyxs,
+      color: TokenPrimitiveMode1.gray400,
     ),
   );
 }
