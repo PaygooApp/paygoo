@@ -51,7 +51,7 @@ class TokenPrimitiveMode1 {
   static const accentwarning800 = Color(0xFF71571E);
   static const accentwarning900 = Color(0xFF544119);
   static const accentwarning950 = Color(0xFF433517);
-  static const baseblack = Color(0xFF000001);
+  static const baseblack = Color(0xFF000000);
   static const basewhite = Color(0xFFFFFFFF);
   static const borderRadiusnone = 0;
   static const borderRadiusround = 999;
