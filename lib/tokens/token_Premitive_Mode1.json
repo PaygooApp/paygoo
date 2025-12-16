@@ -459,23 +459,23 @@
     "Font-weight": {
       "400": {
         "$type": "string",
-        "$value": "Regular"
+        "$value": "400"
       },
       "500": {
         "$type": "string",
-        "$value": "Medium"
+        "$value": "500"
       },
       "600": {
         "$type": "string",
-        "$value": "Semibold"
+        "$value": "600"
       },
       "700": {
         "$type": "string",
-        "$value": "Bold"
+        "$value": "700"
       },
       "800": {
         "$type": "string",
-        "$value": "Extrabold"
+        "$value": "800"
       }
     },
     "Line height": {
