@@ -14,9 +14,27 @@ class App extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
-      home: Scaffold(
-        appBar: AppBar(title: Text("Paygoo")),
-        body: Column(children: [Center(child: Text("Welcome"))]),
+      home: const HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Paygoo")),
+      body: Column(
+        children: [
+          Center(
+            child: Text(
+              "Welcome",
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ),
+        ],
       ),
     );
   }
