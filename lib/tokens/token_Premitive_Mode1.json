@@ -456,28 +456,6 @@
         }
       }
     },
-    "Font-weight": {
-      "400": {
-        "$type": "string",
-        "$value": "Regular"
-      },
-      "500": {
-        "$type": "string",
-        "$value": "Medium"
-      },
-      "600": {
-        "$type": "string",
-        "$value": "Semibold"
-      },
-      "700": {
-        "$type": "string",
-        "$value": "Bold"
-      },
-      "800": {
-        "$type": "string",
-        "$value": "Extrabold"
-      }
-    },
     "Line height": {
       "Body": {
         "lg": {

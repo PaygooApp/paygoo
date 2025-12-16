@@ -113,11 +113,6 @@ class TokenPrimitiveMode1 {
   static const typographyfontSizetitlesm = 16;
   static const typographyfontSizetitlexl = 32;
   static const typographyfontSizetitlexs = 14;
-  static const typographyfontWeight400 = "Regular";
-  static const typographyfontWeight500 = "Medium";
-  static const typographyfontWeight600 = "Semibold";
-  static const typographyfontWeight700 = "Bold";
-  static const typographyfontWeight800 = "Extrabold";
   static const typographylineHeightbodylg = 20;
   static const typographylineHeightbodymd = 20;
   static const typographylineHeightbodysm = 20;
