@@ -1,210 +1,175 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:paygoo/tokens/token_primitive_mode1.dart';
 
 class TTextTheme {
   TTextTheme._();
 
+  // Title font (Inter) - for headlines and titles
+  static TextStyle _titleStyle({
+    required double fontSize,
+    required FontWeight fontWeight,
+    required double lineHeight,
+    required Color color,
+  }) {
+    return GoogleFonts.inter(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      height: lineHeight / fontSize,
+      color: color,
+    );
+  }
+
+  // Body font (DM Sans) - for body text and labels
+  static TextStyle _bodyStyle({
+    required double fontSize,
+    required FontWeight fontWeight,
+    required double lineHeight,
+    required Color color,
+  }) {
+    return GoogleFonts.dmSans(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      height: lineHeight / fontSize,
+      color: color,
+    );
+  }
+
   static TextTheme lightTextTheme = TextTheme(
-    headlineLarge: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+    headlineLarge: _titleStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizetitlexl.toDouble(),
       fontWeight: FontWeight.w700,
-      height:
-          TokenPrimitiveMode1.typographylineHeightheadingxl /
-          TokenPrimitiveMode1.typographyfontSizetitlexl,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightheadingxl.toDouble(),
       color: TokenPrimitiveMode1.gray900,
     ),
-    headlineMedium: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+    headlineMedium: _titleStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizetitlelg.toDouble(),
       fontWeight: FontWeight.w600,
-      height:
-          TokenPrimitiveMode1.typographylineHeightheadinglg /
-          TokenPrimitiveMode1.typographyfontSizetitlelg,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightheadinglg.toDouble(),
       color: TokenPrimitiveMode1.gray900,
     ),
-    headlineSmall: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+    headlineSmall: _titleStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizetitlemd.toDouble(),
       fontWeight: FontWeight.w600,
-      height:
-          TokenPrimitiveMode1.typographylineHeightheadingmd /
-          TokenPrimitiveMode1.typographyfontSizetitlemd,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightheadingmd.toDouble(),
       color: TokenPrimitiveMode1.gray900,
     ),
-    titleLarge: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
-      fontSize: TokenPrimitiveMode1.typographyfontSizetitlesm.toDouble(),
+    titleLarge: _titleStyle(
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlelg.toDouble(),
       fontWeight: FontWeight.w600,
-      height:
-          TokenPrimitiveMode1.typographylineHeightheadingsm /
-          TokenPrimitiveMode1.typographyfontSizetitlesm,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightheadinglg.toDouble(),
       color: TokenPrimitiveMode1.gray900,
     ),
-    titleMedium: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
-      fontSize: TokenPrimitiveMode1.typographyfontSizetitlesm.toDouble(),
+    titleMedium: _titleStyle(
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlemd.toDouble(),
       fontWeight: FontWeight.w500,
-      height:
-          TokenPrimitiveMode1.typographylineHeightheadingsm /
-          TokenPrimitiveMode1.typographyfontSizetitlesm,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightheadingmd.toDouble(),
       color: TokenPrimitiveMode1.gray900,
     ),
-    titleSmall: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
-      fontSize: TokenPrimitiveMode1.typographyfontSizetitlexs.toDouble(),
+    titleSmall: _titleStyle(
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlesm.toDouble(),
       fontWeight: FontWeight.w400,
-      height:
-          TokenPrimitiveMode1.typographylineHeightheadingxs /
-          TokenPrimitiveMode1.typographyfontSizetitlexs,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightheadingsm.toDouble(),
       color: TokenPrimitiveMode1.gray900,
     ),
-    bodyLarge: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+    bodyLarge: _bodyStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizebodylg.toDouble(),
       fontWeight: FontWeight.w500,
-      height:
-          TokenPrimitiveMode1.typographylineHeightbodylg /
-          TokenPrimitiveMode1.typographyfontSizebodylg,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightbodylg.toDouble(),
       color: TokenPrimitiveMode1.gray900,
     ),
-    bodyMedium: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+    bodyMedium: _bodyStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizebodysm.toDouble(),
       fontWeight: FontWeight.w400,
-      height:
-          TokenPrimitiveMode1.typographylineHeightbodysm /
-          TokenPrimitiveMode1.typographyfontSizebodysm,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightbodysm.toDouble(),
       color: TokenPrimitiveMode1.gray900,
     ),
-    bodySmall: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+    bodySmall: _bodyStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizebodymd.toDouble(),
       fontWeight: FontWeight.w500,
-      height:
-          TokenPrimitiveMode1.typographylineHeightbodymd /
-          TokenPrimitiveMode1.typographyfontSizebodymd,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightbodymd.toDouble(),
       color: TokenPrimitiveMode1.gray600,
     ),
-    labelLarge: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+    labelLarge: _bodyStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizebodyxs.toDouble(),
       fontWeight: FontWeight.w400,
-      height:
-          TokenPrimitiveMode1.typographylineHeightbodyxs /
-          TokenPrimitiveMode1.typographyfontSizebodyxs,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightbodyxs.toDouble(),
       color: TokenPrimitiveMode1.gray900,
     ),
-    labelMedium: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+    labelMedium: _bodyStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizebodyxs.toDouble(),
       fontWeight: FontWeight.w400,
-      height:
-          TokenPrimitiveMode1.typographylineHeightbodyxs /
-          TokenPrimitiveMode1.typographyfontSizebodyxs,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightbodyxs.toDouble(),
       color: TokenPrimitiveMode1.gray600,
     ),
   );
 
   /// Customizable Dark Text Theme
   static TextTheme darkTextTheme = TextTheme(
-    headlineLarge: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+    headlineLarge: _titleStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizetitlexl.toDouble(),
       fontWeight: FontWeight.w700,
-      height:
-          TokenPrimitiveMode1.typographylineHeightheadingxl /
-          TokenPrimitiveMode1.typographyfontSizetitlexl,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightheadingxl.toDouble(),
       color: TokenPrimitiveMode1.basewhite,
     ),
-    headlineMedium: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+    headlineMedium: _titleStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizetitlelg.toDouble(),
       fontWeight: FontWeight.w600,
-      height:
-          TokenPrimitiveMode1.typographylineHeightheadinglg /
-          TokenPrimitiveMode1.typographyfontSizetitlelg,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightheadinglg.toDouble(),
       color: TokenPrimitiveMode1.basewhite,
     ),
-    headlineSmall: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
+    headlineSmall: _titleStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizetitlemd.toDouble(),
       fontWeight: FontWeight.w600,
-      height:
-          TokenPrimitiveMode1.typographylineHeightheadingmd /
-          TokenPrimitiveMode1.typographyfontSizetitlemd,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightheadingmd.toDouble(),
       color: TokenPrimitiveMode1.basewhite,
     ),
-    titleLarge: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
-      fontSize: TokenPrimitiveMode1.typographyfontSizetitlesm.toDouble(),
+    titleLarge: _titleStyle(
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlelg.toDouble(),
       fontWeight: FontWeight.w600,
-      height:
-          TokenPrimitiveMode1.typographylineHeightheadingsm /
-          TokenPrimitiveMode1.typographyfontSizetitlesm,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightheadinglg.toDouble(),
       color: TokenPrimitiveMode1.basewhite,
     ),
-    titleMedium: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
-      fontSize: TokenPrimitiveMode1.typographyfontSizetitlesm.toDouble(),
+    titleMedium: _titleStyle(
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlemd.toDouble(),
       fontWeight: FontWeight.w500,
-      height:
-          TokenPrimitiveMode1.typographylineHeightheadingsm /
-          TokenPrimitiveMode1.typographyfontSizetitlesm,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightheadingmd.toDouble(),
       color: TokenPrimitiveMode1.basewhite,
     ),
-    titleSmall: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilytitle,
-      fontSize: TokenPrimitiveMode1.typographyfontSizetitlexs.toDouble(),
+    titleSmall: _titleStyle(
+      fontSize: TokenPrimitiveMode1.typographyfontSizetitlesm.toDouble(),
       fontWeight: FontWeight.w400,
-      height:
-          TokenPrimitiveMode1.typographylineHeightheadingxs /
-          TokenPrimitiveMode1.typographyfontSizetitlexs,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightheadingsm.toDouble(),
       color: TokenPrimitiveMode1.basewhite,
     ),
-    bodyLarge: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+    bodyLarge: _bodyStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizebodylg.toDouble(),
       fontWeight: FontWeight.w500,
-      height:
-          TokenPrimitiveMode1.typographylineHeightbodylg /
-          TokenPrimitiveMode1.typographyfontSizebodylg,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightbodylg.toDouble(),
       color: TokenPrimitiveMode1.basewhite,
     ),
-    bodyMedium: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+    bodyMedium: _bodyStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizebodysm.toDouble(),
       fontWeight: FontWeight.w400,
-      height:
-          TokenPrimitiveMode1.typographylineHeightbodysm /
-          TokenPrimitiveMode1.typographyfontSizebodysm,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightbodysm.toDouble(),
       color: TokenPrimitiveMode1.basewhite,
     ),
-    bodySmall: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+    bodySmall: _bodyStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizebodymd.toDouble(),
       fontWeight: FontWeight.w500,
-      height:
-          TokenPrimitiveMode1.typographylineHeightbodymd /
-          TokenPrimitiveMode1.typographyfontSizebodymd,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightbodymd.toDouble(),
       color: TokenPrimitiveMode1.gray400,
     ),
-    labelLarge: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+    labelLarge: _bodyStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizebodyxs.toDouble(),
       fontWeight: FontWeight.w400,
-      height:
-          TokenPrimitiveMode1.typographylineHeightbodyxs /
-          TokenPrimitiveMode1.typographyfontSizebodyxs,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightbodyxs.toDouble(),
       color: TokenPrimitiveMode1.basewhite,
     ),
-    labelMedium: TextStyle(
-      fontFamily: TokenPrimitiveMode1.typographyfontFamilybody,
+    labelMedium: _bodyStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizebodyxs.toDouble(),
       fontWeight: FontWeight.w400,
-      height:
-          TokenPrimitiveMode1.typographylineHeightbodyxs /
-          TokenPrimitiveMode1.typographyfontSizebodyxs,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightbodyxs.toDouble(),
       color: TokenPrimitiveMode1.gray400,
     ),
   );
