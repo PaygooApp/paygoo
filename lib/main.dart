@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:paygoo/components/compose/order_item_card.dart';
 import 'package:paygoo/components/wrappers/venu_table_card.dart';
 import 'package:paygoo/tokens/token_primitive_mode1.dart';
 import 'package:paygoo/utils/theme/theme.dart';
-import 'package:paygoo/components/atoms/app_checkbox.dart';
 
 void main() {
   runApp(const App());
@@ -30,8 +30,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isChecked = false;
-  bool isCircularChecked = false;
+  bool isItem1Selected = false;
+  bool isItem2Selected = false;
+  int item1Quantity = 1;
+  int item2Quantity = 2;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                 tableNumber: "Table:8",
                 totalAmount: "\$55.50",
               ),
-              SizedBox(height: 28),
+              SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -64,18 +66,33 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-              SizedBox(height: 28),
-              AppCheckbox(
-                value: isChecked,
-                onChanged: (value) => setState(() => isChecked = value),
-                label: "Rectangular (default)",
-              ),
               SizedBox(height: 16),
-              AppCheckbox(
-                value: isCircularChecked,
-                onChanged: (value) => setState(() => isCircularChecked = value),
-                label: "Circular",
-                style: AppCheckboxStyle.circular,
+              // With animation, no border
+              OrderItemCard(
+                itemName: "Margherita Pizza",
+                price: "\$12.99",
+                isSelected: isItem1Selected,
+                onSelectedChanged: (value) =>
+                    setState(() => isItem1Selected = value),
+                quantity: item1Quantity,
+                onQuantityChanged: (value) =>
+                    setState(() => item1Quantity = value),
+                showSelectedBorder: false,
+                enableTapAnimation: true,
+              ),
+              SizedBox(height: 6),
+              // No animation, no border
+              OrderItemCard(
+                itemName: "Caesar Salad",
+                price: "\$8.50",
+                isSelected: isItem2Selected,
+                onSelectedChanged: (value) =>
+                    setState(() => isItem2Selected = value),
+                quantity: item2Quantity,
+                onQuantityChanged: (value) =>
+                    setState(() => item2Quantity = value),
+                showSelectedBorder: false,
+                enableTapAnimation: false,
               ),
             ],
           ),

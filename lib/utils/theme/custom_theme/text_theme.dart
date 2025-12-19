@@ -77,9 +77,10 @@ class TTextTheme {
     ),
     titleSmall: _titleStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizetitlesm.toDouble(),
-      fontWeight: FontWeight.w400,
+      fontWeight: FontWeight.w700,
       lineHeight: TokenPrimitiveMode1.typographylineHeightheadingsm.toDouble(),
       color: TokenPrimitiveMode1.gray900,
+      letterSpacing: 16 * (-3 / 100),
     ),
     bodyLarge: _bodyStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizebodylg.toDouble(),
@@ -152,9 +153,10 @@ class TTextTheme {
     ),
     titleSmall: _titleStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizetitlesm.toDouble(),
-      fontWeight: FontWeight.w400,
+      fontWeight: FontWeight.w700,
       lineHeight: TokenPrimitiveMode1.typographylineHeightheadingsm.toDouble(),
       color: TokenPrimitiveMode1.basewhite,
+      letterSpacing: 16 * (-3 / 100),
     ),
     bodyLarge: _bodyStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizebodylg.toDouble(),
