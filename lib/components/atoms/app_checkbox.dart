@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:paygoo/tokens/token_primitive_mode1.dart';
 
 enum AppCheckboxStyle { rectangular, circular }
@@ -22,7 +23,12 @@ class AppCheckbox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onChanged != null ? () => onChanged!(!value) : null,
+      onTap: onChanged != null
+          ? () {
+              HapticFeedback.lightImpact();
+              onChanged!(!value);
+            }
+          : null,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
