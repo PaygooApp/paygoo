@@ -22,8 +22,6 @@ class VenueTableCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(TokenPrimitiveMode1.scale400.toDouble()),
-      //remove this after the imp, the container should stretch on its  parent restriction..
-      margin: .all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(
