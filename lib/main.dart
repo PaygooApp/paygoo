@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paygoo/components/wrappers/venu_table_card.dart';
 import 'package:paygoo/utils/theme/theme.dart';
 
 void main() {
@@ -31,12 +32,11 @@ class HomePage extends StatelessWidget {
           Center(
             child: Column(
               children: [
-                Text(
-                  "\$24.5",
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: .w600,
-                  ),
+                VenueTableCard(
+                  venueLogo: "venueLogo",
+                  venueName: "Taverna Racilor",
+                  tableNumber: "Table:8",
+                  totalAmount: "\$55.50",
                 ),
               ],
             ),

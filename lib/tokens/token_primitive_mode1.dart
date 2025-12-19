@@ -69,7 +69,7 @@ class TokenPrimitiveMode1 {
   static const gray400 = Color(0xFFADADAD);
   static const gray50 = Color(0xFFFAFAFA);
   static const gray500 = Color(0xFF909090);
-  static const gray600 = Color(0xFF6E6E6E);
+  static const gray600 = Color(0xFF6D6D6D);
   static const gray700 = Color(0xFF5F5F5F);
   static const gray800 = Color(0xFF484848);
   static const gray900 = Color(0xFF2D2D2D);

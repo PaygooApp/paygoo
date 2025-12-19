@@ -63,15 +63,17 @@ class TTextTheme {
     ),
     titleLarge: _titleStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizetitlelg.toDouble(),
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w700,
       lineHeight: TokenPrimitiveMode1.typographylineHeightheadinglg.toDouble(),
       color: TokenPrimitiveMode1.gray900,
+      letterSpacing: -0.5,
     ),
     titleMedium: _titleStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizetitlemd.toDouble(),
-      fontWeight: FontWeight.w500,
-      lineHeight: TokenPrimitiveMode1.typographylineHeightheadingmd.toDouble(),
+      fontWeight: FontWeight.w700,
+      lineHeight: TokenPrimitiveMode1.typographylineHeightheadingsm.toDouble(),
       color: TokenPrimitiveMode1.gray900,
+      letterSpacing: 16 * (-3 / 100),
     ),
     titleSmall: _titleStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizetitlesm.toDouble(),
@@ -94,9 +96,9 @@ class TTextTheme {
     ),
     bodySmall: _bodyStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizebodymd.toDouble(),
-      fontWeight: FontWeight.w400,
+      fontWeight: FontWeight.w500,
       lineHeight: TokenPrimitiveMode1.typographylineHeightbodysm.toDouble(),
-      color: TokenPrimitiveMode1.gray500,
+      color: TokenPrimitiveMode1.gray600,
     ),
     labelLarge: _bodyStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizebodyxs.toDouble(),
@@ -137,9 +139,10 @@ class TTextTheme {
     ),
     titleLarge: _titleStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizetitlelg.toDouble(),
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w700,
       lineHeight: TokenPrimitiveMode1.typographylineHeightheadinglg.toDouble(),
       color: TokenPrimitiveMode1.basewhite,
+      letterSpacing: -0.5,
     ),
     titleMedium: _titleStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizetitlemd.toDouble(),
@@ -168,7 +171,7 @@ class TTextTheme {
     ),
     bodySmall: _bodyStyle(
       fontSize: TokenPrimitiveMode1.typographyfontSizebodymd.toDouble(),
-      fontWeight: FontWeight.w400,
+      fontWeight: FontWeight.w500,
       lineHeight: TokenPrimitiveMode1.typographylineHeightbodysm.toDouble(),
       color: TokenPrimitiveMode1.gray400,
     ),
