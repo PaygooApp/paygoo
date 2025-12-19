@@ -29,9 +29,16 @@ class HomePage extends StatelessWidget {
       body: Column(
         children: [
           Center(
-            child: Text(
-              "Welcome",
-              style: Theme.of(context).textTheme.titleLarge,
+            child: Column(
+              children: [
+                Text(
+                  "\$24.5",
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: .w600,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
