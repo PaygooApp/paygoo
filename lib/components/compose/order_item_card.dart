@@ -11,7 +11,8 @@ class OrderItemCard extends StatefulWidget {
     required this.price,
     required this.isSelected,
     required this.onSelectedChanged,
-    required this.quantity,
+    required this.availableQuantity,
+    required this.selectedQuantity,
     required this.onQuantityChanged,
     this.checkboxStyle = AppCheckboxStyle.circular,
     this.showSelectedBorder = true,
@@ -22,7 +23,13 @@ class OrderItemCard extends StatefulWidget {
   final String price;
   final bool isSelected;
   final ValueChanged<bool> onSelectedChanged;
-  final int quantity;
+
+  /// Maximum available quantity (displayed when inactive).
+  final int availableQuantity;
+
+  /// Current selected quantity (1 to [availableQuantity], displayed when active).
+  final int selectedQuantity;
+
   final ValueChanged<int> onQuantityChanged;
   final AppCheckboxStyle checkboxStyle;
   final bool showSelectedBorder;
@@ -149,10 +156,20 @@ class _OrderItemCardState extends State<OrderItemCard>
                   ],
                 ),
               ),
+
               // Counter (right side)
               AppCounter(
-                value: widget.quantity,
+                value: widget.selectedQuantity,
+                maxValue: widget.availableQuantity,
                 onChanged: widget.onQuantityChanged,
+                isActive: widget.isSelected,
+                style: AppCounterStyle(
+                  height: 34.0,
+                  minWidth: 34.0,
+                  buttonSize: 36.0,
+                  iconSize: 24.0,
+                  padding: 8,
+                ),
               ),
             ],
           ),

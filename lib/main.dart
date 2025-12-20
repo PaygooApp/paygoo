@@ -32,8 +32,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool isItem1Selected = false;
   bool isItem2Selected = false;
-  int item1Quantity = 1;
-  int item2Quantity = 2;
+  // Available quantities (max)
+  static const int item1Available = 5;
+  static const int item2Available = 3;
+  // Selected quantities (1 to available, used when active)
+  int item1Selected = 1;
+  int item2Selected = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -74,9 +78,10 @@ class _HomePageState extends State<HomePage> {
                 isSelected: isItem1Selected,
                 onSelectedChanged: (value) =>
                     setState(() => isItem1Selected = value),
-                quantity: item1Quantity,
+                availableQuantity: item1Available,
+                selectedQuantity: item1Selected,
                 onQuantityChanged: (value) =>
-                    setState(() => item1Quantity = value),
+                    setState(() => item1Selected = value),
                 showSelectedBorder: false,
                 enableTapAnimation: true,
               ),
@@ -88,9 +93,10 @@ class _HomePageState extends State<HomePage> {
                 isSelected: isItem2Selected,
                 onSelectedChanged: (value) =>
                     setState(() => isItem2Selected = value),
-                quantity: item2Quantity,
+                availableQuantity: item2Available,
+                selectedQuantity: item2Selected,
                 onQuantityChanged: (value) =>
-                    setState(() => item2Quantity = value),
+                    setState(() => item2Selected = value),
                 showSelectedBorder: false,
                 enableTapAnimation: false,
               ),
