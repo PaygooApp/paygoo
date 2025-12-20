@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Select all items with their maximum available quantity
   void _selectAll() {
-    HapticFeedback.heavyImpact();
+    // Update UI immediately
     setState(() {
       for (final item in OrderItemsMock.items) {
         _selections[item.id] = OrderItemSelection(
@@ -41,6 +41,17 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     });
+
+    // Run stacking haptic effect in parallel (non-blocking)
+    _playStackingHaptic(OrderItemsMock.items.length);
+  }
+
+  /// Plays rapid haptic taps to simulate "stacking" items
+  void _playStackingHaptic(int count) async {
+    for (int i = 0; i < count; i++) {
+      HapticFeedback.lightImpact();
+      await Future.delayed(const Duration(milliseconds: 40));
+    }
   }
 
   /// Deselect all items and reset quantities to 1
