@@ -175,8 +175,6 @@ class _OrderItemCardState extends State<OrderItemCard>
                 height: 34.0,
                 minWidth: 34.0,
                 buttonSize: 36.0,
-                iconSize: 24.0,
-                padding: 8,
               ),
             ),
           ],
