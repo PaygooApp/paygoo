@@ -84,95 +84,102 @@ class _OrderItemCardState extends State<OrderItemCard>
 
   void _toggleSelection() {
     HapticFeedback.lightImpact();
-    widget.onSelectedChanged(!widget.isSelected);
+    final newSelectedState = !widget.isSelected;
+    widget.onSelectedChanged(newSelectedState);
+
+    // Reset quantity to 1 when deselecting
+    if (!newSelectedState) {
+      widget.onQuantityChanged(1);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: _onTapDown,
-      onTapUp: _onTapUp,
-      onTapCancel: _onTapCancel,
-      child: AnimatedBuilder(
-        animation: _scaleAnimation,
-        builder: (context, child) =>
-            Transform.scale(scale: _scaleAnimation.value, child: child),
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(TokenPrimitiveMode1.scale300.toDouble()),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(
-              TokenPrimitiveMode1.borderRadiuslg.toDouble(),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Color(0x0C000000),
-                blurRadius: 35,
-                offset: Offset(0, 6),
-                spreadRadius: 0,
-              ),
-            ],
-            border: Border.all(
-              color: (widget.isSelected && widget.showSelectedBorder)
-                  ? Theme.of(context).colorScheme.primary
-                  : TokenPrimitiveMode1.basewhite,
-              width: TokenPrimitiveMode1.borderWidthsm.toDouble(),
-            ),
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) =>
+          Transform.scale(scale: _scaleAnimation.value, child: child),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(TokenPrimitiveMode1.scale300.toDouble()),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(
+            TokenPrimitiveMode1.borderRadiuslg.toDouble(),
           ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    AppCheckbox(
-                      value: widget.isSelected,
-                      onChanged: null, // Disable direct tap, card handles it
-                      style: widget.checkboxStyle,
-                    ),
-                    SizedBox(width: TokenPrimitiveMode1.scale300.toDouble()),
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            widget.itemName,
-                            style: Theme.of(context).textTheme.titleSmall,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          SizedBox(
-                            height: TokenPrimitiveMode1.scale100.toDouble(),
-                          ),
-                          Text(
-                            widget.price,
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(color: TokenPrimitiveMode1.gray500),
-                          ),
-                        ],
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x0C000000),
+              blurRadius: 35,
+              offset: Offset(0, 6),
+              spreadRadius: 0,
+            ),
+          ],
+          border: Border.all(
+            color: (widget.isSelected && widget.showSelectedBorder)
+                ? Theme.of(context).colorScheme.primary
+                : TokenPrimitiveMode1.basewhite,
+            width: TokenPrimitiveMode1.borderWidthsm.toDouble(),
+          ),
+        ),
+        child: Row(
+          children: [
+            // Tappable area: checkbox + item details (content only, no fill)
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapDown: _onTapDown,
+              onTapUp: _onTapUp,
+              onTapCancel: _onTapCancel,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppCheckbox(
+                    value: widget.isSelected,
+                    onChanged: null,
+                    style: widget.checkboxStyle,
+                  ),
+                  SizedBox(width: TokenPrimitiveMode1.scale300.toDouble()),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        widget.itemName,
+                        style: Theme.of(context).textTheme.titleSmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
-                ),
+                      SizedBox(height: TokenPrimitiveMode1.scale100.toDouble()),
+                      Text(
+                        widget.price,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: TokenPrimitiveMode1.gray500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
+            ),
 
-              // Counter (right side)
-              AppCounter(
-                value: widget.selectedQuantity,
-                maxValue: widget.availableQuantity,
-                onChanged: widget.onQuantityChanged,
-                isActive: widget.isSelected,
-                style: AppCounterStyle(
-                  height: 34.0,
-                  minWidth: 34.0,
-                  buttonSize: 36.0,
-                  iconSize: 24.0,
-                  padding: 8,
-                ),
+            // Spacer pushes counter to the right
+            const Spacer(),
+
+            // Counter (right side) - NOT tappable for toggle
+            AppCounter(
+              value: widget.selectedQuantity,
+              maxValue: widget.availableQuantity,
+              onChanged: widget.onQuantityChanged,
+              isActive: widget.isSelected,
+              style: AppCounterStyle(
+                height: 34.0,
+                minWidth: 34.0,
+                buttonSize: 36.0,
+                iconSize: 24.0,
+                padding: 8,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
