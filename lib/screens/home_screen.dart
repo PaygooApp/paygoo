@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:paygoo/components/compose/order_item_card.dart';
+import 'package:paygoo/components/wrappers/bottom_summary_card.dart';
+import 'package:paygoo/components/wrappers/order_item_card.dart';
 import 'package:paygoo/components/wrappers/venu_table_card.dart';
 import 'package:paygoo/mocks/order_items_mock.dart';
 import 'package:paygoo/models/order_item.dart';
@@ -69,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text("Paygoo")),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 140), // Space for bottom card
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
@@ -134,6 +136,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomSummaryCard(
+        itemCount: "3 items",
+        totalAmount: "\$34.49",
+        buttonText: "Continue to Payment",
+        onButtonPressed: () {
+          // TODO: Handle payment
+        },
       ),
     );
   }
