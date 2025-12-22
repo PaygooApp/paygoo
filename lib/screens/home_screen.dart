@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:paygoo/components/atoms/overscroll_message.dart';
@@ -308,7 +310,7 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
           ),
-          // Sticky header - appears when scrolling down past the threshold
+          // Sticky header with glass effect - appears when scrolling down past the threshold
           if (_showStickyHeader)
             Positioned(
               top: 0,
@@ -332,24 +334,39 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                   );
                 },
-                child: Container(
-                  padding: EdgeInsets.only(
-                    top: _topPadding + 8,
-                    left: 16,
-                    right: 16,
-                    bottom: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.08),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                    child: Container(
+                      padding: EdgeInsets.only(
+                        top: _topPadding + 8,
+                        left: 16,
+                        right: 16,
+                        bottom: 12,
                       ),
-                    ],
+                      decoration: BoxDecoration(
+                        // Semi-transparent background for glass effect
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surface.withValues(alpha: 0.7),
+                        // Subtle border at the bottom for definition
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            width: 1,
+                          ),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 20,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: _buildVenueTableCard(),
+                    ),
                   ),
-                  child: _buildVenueTableCard(),
                 ),
               ),
             ),
