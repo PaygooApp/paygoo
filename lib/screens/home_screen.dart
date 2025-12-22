@@ -189,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen>
   // Height of the cover image
   static const double _coverHeight = 200.0;
   // How much VenueTableCard overlaps the cover (50% of card height ~60px)
-  static const double _cardOverlap = 60.0;
+  static const double _cardOverlap = 40.0;
 
   // Build the VenueTableCard widget (reused in both positions)
   Widget _buildVenueTableCard() {
