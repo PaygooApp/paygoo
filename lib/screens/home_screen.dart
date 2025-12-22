@@ -11,7 +11,11 @@ import 'package:paygoo/models/order_item.dart';
 import 'package:paygoo/utils/order_calculator.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.enableStickyVenueHeader = true});
+
+  /// When true, the VenueTableCard becomes a sticky header with glass effect
+  /// when scrolling down. When false, it scrolls normally with the content.
+  final bool enableStickyVenueHeader;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -66,6 +70,16 @@ class _HomeScreenState extends State<HomeScreen>
       vsync: this,
       duration: const Duration(milliseconds: 200),
     );
+    // Listen to animation status to trigger rebuild when animation completes
+    _stickyAnimationController.addStatusListener(_onAnimationStatusChange);
+  }
+
+  void _onAnimationStatusChange(AnimationStatus status) {
+    // Trigger rebuild when animation completes to hide/show header
+    if (status == AnimationStatus.dismissed ||
+        status == AnimationStatus.completed) {
+      setState(() {});
+    }
   }
 
   @override
@@ -95,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen>
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+    _stickyAnimationController.removeStatusListener(_onAnimationStatusChange);
     _stickyAnimationController.dispose();
     super.dispose();
   }
@@ -187,7 +202,11 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   // Check if the sticky header should be visible
-  bool get _showStickyHeader => _scrollOffset >= _stickyThreshold;
+  // Only show when feature is enabled AND (above threshold OR animation is running)
+  bool get _showStickyHeader =>
+      widget.enableStickyVenueHeader &&
+      (_scrollOffset >= _stickyThreshold ||
+          _stickyAnimationController.value > 0);
 
   @override
   Widget build(BuildContext context) {
@@ -224,15 +243,26 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                       ),
                       // VenueTableCard positioned to overlap bottom of cover
-                      // Hide when sticky header is fully visible
+                      // Crossfade with sticky header when feature is enabled
                       Positioned(
                         left: 16,
                         right: 16,
                         bottom: -_cardOverlap,
-                        child: Opacity(
-                          opacity: _showStickyHeader ? 0.0 : 1.0,
-                          child: _buildVenueTableCard(),
-                        ),
+                        child: widget.enableStickyVenueHeader
+                            ? AnimatedBuilder(
+                                animation: _stickyAnimationController,
+                                builder: (context, child) {
+                                  // Original card fades in as sticky header fades out
+                                  // opacity: 1 when animation is at 0, opacity: 0 when animation is at 1
+                                  return Opacity(
+                                    opacity:
+                                        1.0 - _stickyAnimationController.value,
+                                    child: child,
+                                  );
+                                },
+                                child: _buildVenueTableCard(),
+                              )
+                            : _buildVenueTableCard(),
                       ),
                     ],
                   ),
@@ -320,17 +350,22 @@ class _HomeScreenState extends State<HomeScreen>
                 animation: _stickyAnimationController,
                 builder: (context, child) {
                   final progress = _stickyAnimationController.value;
-                  // Scale from 0.85 to 1.0 as it animates in
+                  // Scale from 0.85 to 1.0 as it animates in/out
                   final scale = 0.85 + (0.15 * progress);
-                  // Slide down from -20 to 0
+                  // Slide down from -20 to 0 (and back up when disappearing)
                   final slideOffset = -20.0 * (1 - progress);
+                  // Fade in/out with the animation
+                  final opacity = progress;
 
-                  return Transform.translate(
-                    offset: Offset(0, slideOffset),
-                    child: Transform.scale(
-                      scale: scale,
-                      alignment: Alignment.topCenter,
-                      child: child,
+                  return Opacity(
+                    opacity: opacity,
+                    child: Transform.translate(
+                      offset: Offset(0, slideOffset),
+                      child: Transform.scale(
+                        scale: scale,
+                        alignment: Alignment.topCenter,
+                        child: child,
+                      ),
                     ),
                   );
                 },
