@@ -15,7 +15,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   // Map of item id -> selection state
   late Map<String, OrderItemSelection> _selections;
 
@@ -31,6 +32,22 @@ class _HomeScreenState extends State<HomeScreen> {
   // Threshold for triggering haptic feedback
   static const double _hapticThreshold = 40.0;
 
+  // Scroll controller for tracking scroll position
+  late ScrollController _scrollController;
+
+  // Animation controller for sticky header transition
+  late AnimationController _stickyAnimationController;
+
+  // Track scroll offset for sticky header
+  double _scrollOffset = 0.0;
+
+  // The position where the card should start becoming sticky
+  // This is the bottom of the cover image minus the card overlap
+  double get _stickyThreshold => _coverHeight - _cardOverlap;
+
+  // Safe area top padding (status bar height)
+  double _topPadding = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -39,6 +56,45 @@ class _HomeScreenState extends State<HomeScreen> {
       for (final item in OrderItemsMock.items)
         item.id: const OrderItemSelection(),
     };
+
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+
+    _stickyAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _topPadding = MediaQuery.of(context).padding.top;
+  }
+
+  void _onScroll() {
+    final offset = _scrollController.offset;
+    if (offset != _scrollOffset) {
+      setState(() {
+        _scrollOffset = offset;
+      });
+
+      // Animate the sticky header based on scroll position
+      if (offset >= _stickyThreshold && _stickyAnimationController.value < 1) {
+        _stickyAnimationController.forward();
+      } else if (offset < _stickyThreshold &&
+          _stickyAnimationController.value > 0) {
+        _stickyAnimationController.reverse();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    _stickyAnimationController.dispose();
+    super.dispose();
   }
 
   /// Handle scroll notifications to track overscroll
@@ -118,6 +174,19 @@ class _HomeScreenState extends State<HomeScreen> {
   // How much VenueTableCard overlaps the cover (50% of card height ~60px)
   static const double _cardOverlap = 60.0;
 
+  // Build the VenueTableCard widget (reused in both positions)
+  Widget _buildVenueTableCard() {
+    return VenueTableCard(
+      venueLogo: "venueLogo",
+      venueName: "Taverna Racilor",
+      tableNumber: "Table:8",
+      totalAmount: "\$55.50",
+    );
+  }
+
+  // Check if the sticky header should be visible
+  bool get _showStickyHeader => _scrollOffset >= _stickyThreshold;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,6 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
           NotificationListener<ScrollNotification>(
             onNotification: _handleScrollNotification,
             child: SingleChildScrollView(
+              controller: _scrollController,
               physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.only(bottom: 16),
               child: Column(
@@ -152,15 +222,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       // VenueTableCard positioned to overlap bottom of cover
+                      // Hide when sticky header is fully visible
                       Positioned(
                         left: 16,
                         right: 16,
                         bottom: -_cardOverlap,
-                        child: VenueTableCard(
-                          venueLogo: "venueLogo",
-                          venueName: "Taverna Racilor",
-                          tableNumber: "Table:8",
-                          totalAmount: "\$55.50",
+                        child: Opacity(
+                          opacity: _showStickyHeader ? 0.0 : 1.0,
+                          child: _buildVenueTableCard(),
                         ),
                       ),
                     ],
@@ -239,6 +308,51 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          // Sticky header - appears when scrolling down past the threshold
+          if (_showStickyHeader)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: AnimatedBuilder(
+                animation: _stickyAnimationController,
+                builder: (context, child) {
+                  final progress = _stickyAnimationController.value;
+                  // Scale from 0.85 to 1.0 as it animates in
+                  final scale = 0.85 + (0.15 * progress);
+                  // Slide down from -20 to 0
+                  final slideOffset = -20.0 * (1 - progress);
+
+                  return Transform.translate(
+                    offset: Offset(0, slideOffset),
+                    child: Transform.scale(
+                      scale: scale,
+                      alignment: Alignment.topCenter,
+                      child: child,
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.only(
+                    top: _topPadding + 8,
+                    left: 16,
+                    right: 16,
+                    bottom: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: _buildVenueTableCard(),
+                ),
+              ),
+            ),
         ],
       ),
       bottomNavigationBar: BottomSummaryCard(
