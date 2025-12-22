@@ -3,12 +3,14 @@ class OrderItem {
   final String id;
   final String name;
   final String price;
+  final double priceValue; // Numeric price for calculations
   final int availableQuantity;
 
   const OrderItem({
     required this.id,
     required this.name,
     required this.price,
+    required this.priceValue,
     required this.availableQuantity,
   });
 }
@@ -23,14 +25,10 @@ class OrderItemSelection {
     this.selectedQuantity = 1,
   });
 
-  OrderItemSelection copyWith({
-    bool? isSelected,
-    int? selectedQuantity,
-  }) {
+  OrderItemSelection copyWith({bool? isSelected, int? selectedQuantity}) {
     return OrderItemSelection(
       isSelected: isSelected ?? this.isSelected,
       selectedQuantity: selectedQuantity ?? this.selectedQuantity,
     );
   }
 }
-
