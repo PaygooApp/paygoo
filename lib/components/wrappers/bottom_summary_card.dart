@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:paygoo/tokens/token_primitive_mode1.dart';
+import 'package:sliding_action_button/sliding_action_button.dart';
 
 /// A fixed bottom card that displays order summary information.
 class BottomSummaryCard extends StatelessWidget {
-  final String itemCount;
+  final String selectedItemsAmount;
+  final String tipAmount;
   final String totalAmount;
-  final String buttonText;
-  final VoidCallback? onButtonPressed;
+  final String initialSlideText;
+  final String completedSlideText;
+  final VoidCallback? onSlideCompleted;
+  final bool isEnabled;
 
   const BottomSummaryCard({
     super.key,
-    this.itemCount = "0 items",
+    this.selectedItemsAmount = "\$0.00",
+    this.tipAmount = "\$0.00",
     this.totalAmount = "\$0.00",
-    this.buttonText = "Continue to Payment",
-    this.onButtonPressed,
+    this.initialSlideText = "Slide to Pay",
+    this.completedSlideText = "Processing...",
+    this.onSlideCompleted,
+    this.isEnabled = true,
   });
 
   @override
@@ -36,76 +44,164 @@ class BottomSummaryCard extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Summary row
+              // Selected Items row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Selected Items",
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: TokenPrimitiveMode1.gray400,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        itemCount,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w600),
-                      ),
-                    ],
+                  Text(
+                    "Selected Items",
+                    style: GoogleFonts.dmSans(
+                      fontSize: 13,
+                      color: TokenPrimitiveMode1.gray500,
+                    ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        "Total",
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: TokenPrimitiveMode1.gray400,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        totalAmount,
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    selectedItemsAmount,
+                    style: GoogleFonts.dmSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: TokenPrimitiveMode1.gray700,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              // Tip row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Tip",
+                    style: GoogleFonts.dmSans(
+                      fontSize: 13,
+                      color: TokenPrimitiveMode1.gray500,
+                    ),
+                  ),
+                  Text(
+                    tipAmount,
+                    style: GoogleFonts.dmSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: TokenPrimitiveMode1.gray700,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              // Horizontal divider
+              Divider(
+                height: 1,
+                thickness: 1,
+                color: TokenPrimitiveMode1.gray200,
+              ),
+              const SizedBox(height: 12),
+              // Total row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Total",
+                    style: GoogleFonts.dmSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: TokenPrimitiveMode1.gray700,
+                    ),
+                  ),
+                  Text(
+                    totalAmount,
+                    style: GoogleFonts.dmSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
-              // Button
+              // Sliding action button with oversized thumb
               SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: onButtonPressed,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    buttonText,
-                    style: const TextStyle(
-                      fontSize: 16,
+                height: 64, // Extra height to accommodate larger button
+                child: Center(
+                  child: CircleSlideToActionButton(
+                    // Full width of card (screen width - horizontal padding 20*2)
+                    width: MediaQuery.of(context).size.width - 40,
+                    height: 50,
+                    parentBoxRadiusValue: 50,
+                    circleSlidingButtonSize: 50,
+                    initialSlidingActionLabel: 'Tap to add more items',
+                    finalSlidingActionLabel: 'Added To Basket',
+                    initialSlidingActionLabelTextStyle: GoogleFonts.dmSans(
+                      fontSize: TokenPrimitiveMode1.typographyfontSizebodylg
+                          .toDouble(),
                       fontWeight: FontWeight.w600,
+                      color: TokenPrimitiveMode1.gray400,
                     ),
+                    finalSlidingActionLabelTextStyle: GoogleFonts.dmSans(
+                      fontSize: TokenPrimitiveMode1.typographyfontSizebodylg
+                          .toDouble(),
+                      fontWeight: FontWeight.w600,
+                      color: TokenPrimitiveMode1.gray500,
+                    ),
+                    circleSlidingButtonIcon: const Icon(
+                      Icons.keyboard_double_arrow_right_outlined,
+                      color: TokenPrimitiveMode1.basewhite,
+                    ),
+                    parentBoxBackgroundColor: TokenPrimitiveMode1.primary50,
+                    parentBoxDisableBackgroundColor: Colors.grey,
+                    /*  parentBoxGradientBackgroundColor:
+                  LinearGradient(colors: [Colors.red, Colors.white]),
+              parentBoxDisableGradientBackgroundColor:
+                  LinearGradient(colors: [Colors.red, Colors.white]),*/
+                    circleSlidingButtonBackgroundColor: TokenPrimitiveMode1
+                        .primary500
+                        .withValues(alpha: 0.28),
+                    isEnable: true,
+                    onSlideActionCompleted: () {
+                      print("Sliding action completed");
+                    },
+                    onSlideActionCanceled: () {
+                      print("Sliding action cancelled");
+                    },
                   ),
                 ),
               ),
+              // const SizedBox(height: 12),
+              // Terms and conditions text
+              // Center(
+              //   child: RichText(
+              //     textAlign: TextAlign.center,
+              //     text: TextSpan(
+              //       style: GoogleFonts.dmSans(
+              //         fontSize: 10,
+              //         color: TokenPrimitiveMode1.gray400,
+              //       ),
+              //       children: [
+              //         const TextSpan(text: 'By proceeding you agree to our '),
+              //         TextSpan(
+              //           text: 'Terms & Conditions',
+              //           style: GoogleFonts.dmSans(
+              //             fontSize: 10,
+              //             fontWeight: FontWeight.w600,
+              //             color: TokenPrimitiveMode1.primary500,
+              //           ),
+              //         ),
+              //         const TextSpan(text: '\nand '),
+              //         TextSpan(
+              //           text: 'Privacy Policy',
+              //           style: GoogleFonts.dmSans(
+              //             fontSize: 10,
+              //             fontWeight: FontWeight.w600,
+              //             color: TokenPrimitiveMode1.primary500,
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),

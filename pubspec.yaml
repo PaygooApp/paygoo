@@ -37,6 +37,7 @@ dependencies:
   flutter_native_splash: ^2.4.7
   google_fonts: ^6.3.3
   flutter_svg: ^2.2.3
+  sliding_action_button: ^0.0.8
 
 dev_dependencies:
   flutter_test:

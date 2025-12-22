@@ -408,10 +408,13 @@ class _HomeScreenState extends State<HomeScreen>
         ],
       ),
       bottomNavigationBar: BottomSummaryCard(
-        itemCount: _calculator.formattedItemCount,
-        totalAmount: _calculator.formattedItemTotal,
-        buttonText: "Continue to Payment",
-        onButtonPressed: () {
+        selectedItemsAmount: _calculator.formattedItemTotal,
+        tipAmount: "\$0.00", // TODO: Add tip calculation
+        totalAmount: _calculator.formattedItemTotal, // TODO: Add tip to total
+        initialSlideText: "Slide to Pay",
+        completedSlideText: "Processing...",
+        isEnabled: _calculator.hasAnySelected,
+        onSlideCompleted: () {
           // TODO: Handle payment
         },
       ),
