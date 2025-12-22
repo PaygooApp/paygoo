@@ -1,28 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:paygoo/components/atoms/option_card_selector.dart';
 import 'package:paygoo/tokens/token_primitive_mode1.dart';
 import 'package:sliding_action_button/sliding_action_button.dart';
 
 /// A fixed bottom card that displays order summary information.
 class BottomSummaryCard extends StatelessWidget {
-  final String selectedItemsAmount;
-  final String tipAmount;
-  final String totalAmount;
+  final double selectedItemsTotal;
   final String initialSlideText;
   final String completedSlideText;
   final VoidCallback? onSlideCompleted;
   final bool isEnabled;
+  final int? selectedTipIndex;
+  final ValueChanged<int?>? onTipChanged;
 
   const BottomSummaryCard({
     super.key,
-    this.selectedItemsAmount = "\$0.00",
-    this.tipAmount = "\$0.00",
-    this.totalAmount = "\$0.00",
+    this.selectedItemsTotal = 0.0,
     this.initialSlideText = "Slide to Pay",
     this.completedSlideText = "Processing...",
     this.onSlideCompleted,
     this.isEnabled = true,
+    this.selectedTipIndex,
+    this.onTipChanged,
   });
+
+  // Tip options for the selector
+  static const List<OptionCardItem> tipOptions = [
+    OptionCardItem(emoji: '😎', label: '5%', value: 5),
+    OptionCardItem(emoji: '🎉', label: '10%', value: 10),
+    OptionCardItem(emoji: '🔥', label: '15%', value: 15),
+    OptionCardItem(emoji: '✏️', label: 'Custom', value: null),
+  ];
+
+  double get _tipAmount {
+    if (selectedTipIndex == null) return 0.0;
+    final option = tipOptions[selectedTipIndex!];
+    if (option.value == null) return 0.0; // Custom - TODO: implement
+    return selectedItemsTotal * (option.value as int) / 100;
+  }
+
+  double get _totalAmount => selectedItemsTotal + _tipAmount;
+
+  String _formatCurrency(double amount) {
+    return '\$${amount.toStringAsFixed(2)}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +55,23 @@ class BottomSummaryCard extends StatelessWidget {
           topLeft: Radius.circular(24),
           topRight: Radius.circular(24),
         ),
+        border: Border(
+          top: BorderSide(color: TokenPrimitiveMode1.gray100, width: 1),
+          left: BorderSide(color: TokenPrimitiveMode1.gray100, width: 1),
+          right: BorderSide(color: TokenPrimitiveMode1.gray100, width: 1),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 24,
+            spreadRadius: 0,
+            offset: const Offset(0, -8),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            spreadRadius: 0,
+            offset: const Offset(0, -2),
           ),
         ],
       ),
@@ -48,80 +82,88 @@ class BottomSummaryCard extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Selected Items row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Selected Items",
-                    style: GoogleFonts.dmSans(
-                      fontSize: 13,
-                      color: TokenPrimitiveMode1.gray500,
+              // Tip and Service Fee rows - only show when items are selected
+              if (isEnabled) ...[
+                // Tip label
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Add tips ",
+                          style: GoogleFonts.dmSans(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: TokenPrimitiveMode1.gray900,
+                          ),
+                        ),
+                        TextSpan(
+                          text: "(optional)",
+                          style: GoogleFonts.dmSans(
+                            fontSize: 11,
+                            color: TokenPrimitiveMode1.gray500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Text(
-                    selectedItemsAmount,
-                    style: GoogleFonts.dmSans(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: TokenPrimitiveMode1.gray700,
+                ),
+                const SizedBox(height: 8),
+                // Tip selector cards
+                OptionCardSelector(
+                  options: tipOptions,
+                  selectedIndex: selectedTipIndex,
+                  onChanged: onTipChanged,
+                ),
+                const SizedBox(height: 12),
+                // Service Fee row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Service Fee",
+                      style: GoogleFonts.dmSans(
+                        fontSize: 13,
+                        color: TokenPrimitiveMode1.gray500,
+                      ),
                     ),
+                    Text(
+                      _formatCurrency(selectedItemsTotal),
+                      style: GoogleFonts.dmSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: TokenPrimitiveMode1.gray700,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                // Tip amount row (only show if tip selected)
+                if (selectedTipIndex != null) ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Tip Amount",
+                        style: GoogleFonts.dmSans(
+                          fontSize: 13,
+                          color: TokenPrimitiveMode1.gray500,
+                        ),
+                      ),
+                      Text(
+                        _formatCurrency(_tipAmount),
+                        style: GoogleFonts.dmSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: TokenPrimitiveMode1.gray700,
+                        ),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 8),
                 ],
-              ),
-              const SizedBox(height: 8),
-              // Tip row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Tip",
-                    style: GoogleFonts.dmSans(
-                      fontSize: 13,
-                      color: TokenPrimitiveMode1.gray500,
-                    ),
-                  ),
-                  Text(
-                    tipAmount,
-                    style: GoogleFonts.dmSans(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: TokenPrimitiveMode1.gray700,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              // Horizontal divider
-              Divider(
-                height: 1,
-                thickness: 1,
-                color: TokenPrimitiveMode1.gray200,
-              ),
-              const SizedBox(height: 12),
-              // Total row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Total",
-                    style: GoogleFonts.dmSans(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: TokenPrimitiveMode1.gray700,
-                    ),
-                  ),
-                  Text(
-                    totalAmount,
-                    style: GoogleFonts.dmSans(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
+              ],
               // Sliding action button with oversized thumb
               SizedBox(
                 height: 64, // Extra height to accommodate larger button
@@ -132,19 +174,20 @@ class BottomSummaryCard extends StatelessWidget {
                     height: 50,
                     parentBoxRadiusValue: 50,
                     circleSlidingButtonSize: 50,
-                    initialSlidingActionLabel: 'Tap to add more items',
-                    finalSlidingActionLabel: 'Added To Basket',
+                    initialSlidingActionLabel:
+                        'Swipe to pay ${_formatCurrency(_totalAmount)}',
+                    finalSlidingActionLabel: 'Processing...',
                     initialSlidingActionLabelTextStyle: GoogleFonts.dmSans(
                       fontSize: TokenPrimitiveMode1.typographyfontSizebodylg
                           .toDouble(),
                       fontWeight: FontWeight.w600,
-                      color: TokenPrimitiveMode1.gray400,
+                      color: TokenPrimitiveMode1.gray800,
                     ),
                     finalSlidingActionLabelTextStyle: GoogleFonts.dmSans(
                       fontSize: TokenPrimitiveMode1.typographyfontSizebodylg
                           .toDouble(),
                       fontWeight: FontWeight.w600,
-                      color: TokenPrimitiveMode1.gray500,
+                      color: TokenPrimitiveMode1.gray800,
                     ),
                     circleSlidingButtonIcon: const Icon(
                       Icons.keyboard_double_arrow_right_outlined,
@@ -156,9 +199,8 @@ class BottomSummaryCard extends StatelessWidget {
                   LinearGradient(colors: [Colors.red, Colors.white]),
               parentBoxDisableGradientBackgroundColor:
                   LinearGradient(colors: [Colors.red, Colors.white]),*/
-                    circleSlidingButtonBackgroundColor: TokenPrimitiveMode1
-                        .primary500
-                        .withValues(alpha: 0.28),
+                    circleSlidingButtonBackgroundColor:
+                        TokenPrimitiveMode1.primary500,
                     isEnable: true,
                     onSlideActionCompleted: () {
                       print("Sliding action completed");

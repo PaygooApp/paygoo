@@ -26,6 +26,9 @@ class _HomeScreenState extends State<HomeScreen>
   // Map of item id -> selection state
   late Map<String, OrderItemSelection> _selections;
 
+  // Track selected tip option index
+  int? _selectedTipIndex;
+
   // Track overscroll amount for fun messages
   double _overscrollAmount = 0.0;
 
@@ -224,7 +227,10 @@ class _HomeScreenState extends State<HomeScreen>
             child: SingleChildScrollView(
               controller: _scrollController,
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 16),
+              // Add extra bottom padding when items are selected to account for BottomSummaryCard
+              padding: EdgeInsets.only(
+                bottom: _calculator.hasAnySelected ? 200 : 16,
+              ),
               child: Column(
                 children: [
                   // Cover image with overlapping VenueTableCard
@@ -405,18 +411,37 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
               ),
             ),
+          // Bottom summary card - slides in from bottom when items selected
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: AnimatedSlide(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              offset: _calculator.hasAnySelected
+                  ? Offset.zero
+                  : const Offset(0, 1), // Slide down when hidden
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 300),
+                opacity: _calculator.hasAnySelected ? 1.0 : 0.0,
+                child: BottomSummaryCard(
+                  selectedItemsTotal: _calculator.itemTotal,
+                  isEnabled: _calculator.hasAnySelected,
+                  selectedTipIndex: _selectedTipIndex,
+                  onTipChanged: (index) {
+                    setState(() {
+                      _selectedTipIndex = index;
+                    });
+                  },
+                  onSlideCompleted: () {
+                    // TODO: Handle payment
+                  },
+                ),
+              ),
+            ),
+          ),
         ],
-      ),
-      bottomNavigationBar: BottomSummaryCard(
-        selectedItemsAmount: _calculator.formattedItemTotal,
-        tipAmount: "\$0.00", // TODO: Add tip calculation
-        totalAmount: _calculator.formattedItemTotal, // TODO: Add tip to total
-        initialSlideText: "Slide to Pay",
-        completedSlideText: "Processing...",
-        isEnabled: _calculator.hasAnySelected,
-        onSlideCompleted: () {
-          // TODO: Handle payment
-        },
       ),
     );
   }
