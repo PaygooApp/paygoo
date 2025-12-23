@@ -101,27 +101,11 @@ class _OrderItemCardState extends State<OrderItemCard>
           Transform.scale(scale: _scaleAnimation.value, child: child),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(TokenPrimitiveMode1.scale300.toDouble()),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(
-            TokenPrimitiveMode1.borderRadiuslg.toDouble(),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Color(0x0C000000),
-              blurRadius: 35,
-              offset: Offset(0, 6),
-              spreadRadius: 0,
-            ),
-          ],
-          border: Border.all(
-            color: (widget.isSelected && widget.showSelectedBorder)
-                ? Theme.of(context).colorScheme.primary
-                : TokenPrimitiveMode1.basewhite,
-            width: TokenPrimitiveMode1.borderWidthsm.toDouble(),
-          ),
+        padding: EdgeInsets.symmetric(
+          horizontal: TokenPrimitiveMode1.scale300.toDouble(),
+          vertical: TokenPrimitiveMode1.scale300.toDouble(),
         ),
+        color: Theme.of(context).colorScheme.surface,
         child: Row(
           children: [
             // Tappable area: checkbox + item details (content only, no fill)

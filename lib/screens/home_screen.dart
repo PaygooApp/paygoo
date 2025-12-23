@@ -3,11 +3,13 @@ import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:paygoo/components/atoms/overscroll_message.dart';
+import 'package:paygoo/components/atoms/wave_paper_clipper.dart';
 import 'package:paygoo/components/wrappers/bottom_summary_card.dart';
 import 'package:paygoo/components/wrappers/order_item_card.dart';
 import 'package:paygoo/components/wrappers/venu_table_card.dart';
 import 'package:paygoo/mocks/order_items_mock.dart';
 import 'package:paygoo/models/order_item.dart';
+import 'package:paygoo/tokens/token_primitive_mode1.dart';
 import 'package:paygoo/utils/order_calculator.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -305,40 +307,80 @@ class _HomeScreenState extends State<HomeScreen>
                           ],
                         ),
                         SizedBox(height: 16),
-                        // Order list
-                        ...OrderItemsMock.items.map((item) {
-                          final selection = _selections[item.id]!;
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 6),
-                            child: OrderItemCard(
-                              itemName: item.name,
-                              price: item.price,
-                              isSelected: selection.isSelected,
-                              onSelectedChanged: (value) => setState(() {
-                                // Get current state to avoid stale closure
-                                final current = _selections[item.id]!;
-                                _selections[item.id] = current.copyWith(
-                                  isSelected: value,
-                                  // Reset to 1 when deselecting
-                                  selectedQuantity: value
-                                      ? current.selectedQuantity
-                                      : 1,
-                                );
-                              }),
-                              availableQuantity: item.availableQuantity,
-                              selectedQuantity: selection.selectedQuantity,
-                              onQuantityChanged: (value) => setState(() {
-                                // Get current state to avoid stale closure
-                                final current = _selections[item.id]!;
-                                _selections[item.id] = current.copyWith(
-                                  selectedQuantity: value,
-                                );
-                              }),
-                              showSelectedBorder: false,
-                              enableTapAnimation: true,
+                        // Order list wrapped in a wave paper container
+                        WavePaperContainer(
+                          color: Theme.of(context).colorScheme.surface,
+                          waveHeight: 10,
+                          waveWidth: 20,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color(0x10000000),
+                              blurRadius: 8,
+                              offset: Offset(0, -3),
+                              spreadRadius: 0,
                             ),
-                          );
-                        }),
+                            BoxShadow(
+                              color: Color(0x10000000),
+                              blurRadius: 8,
+                              offset: Offset(0, 3),
+                              spreadRadius: 0,
+                            ),
+                          ],
+                          child: Column(
+                            children: [
+                              ...OrderItemsMock.items.asMap().entries.map((
+                                entry,
+                              ) {
+                                final index = entry.key;
+                                final item = entry.value;
+                                final selection = _selections[item.id]!;
+                                final isLast =
+                                    index == OrderItemsMock.items.length - 1;
+                                return Column(
+                                  children: [
+                                    OrderItemCard(
+                                      itemName: item.name,
+                                      price: item.price,
+                                      isSelected: selection.isSelected,
+                                      onSelectedChanged: (value) => setState(() {
+                                        // Get current state to avoid stale closure
+                                        final current = _selections[item.id]!;
+                                        _selections[item.id] = current.copyWith(
+                                          isSelected: value,
+                                          // Reset to 1 when deselecting
+                                          selectedQuantity: value
+                                              ? current.selectedQuantity
+                                              : 1,
+                                        );
+                                      }),
+                                      availableQuantity: item.availableQuantity,
+                                      selectedQuantity:
+                                          selection.selectedQuantity,
+                                      onQuantityChanged: (value) => setState(() {
+                                        // Get current state to avoid stale closure
+                                        final current = _selections[item.id]!;
+                                        _selections[item.id] = current.copyWith(
+                                          selectedQuantity: value,
+                                        );
+                                      }),
+                                      showSelectedBorder: false,
+                                      enableTapAnimation: true,
+                                    ),
+                                    if (!isLast)
+                                      Divider(
+                                        height: 1,
+                                        thickness: 1,
+                                        color: TokenPrimitiveMode1.gray200,
+                                        indent: 0,
+                                        endIndent: 0,
+                                      ),
+                                  ],
+                                );
+                              }),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 30),
                       ],
                     ),
                   ),
