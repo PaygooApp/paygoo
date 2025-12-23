@@ -1,32 +1,36 @@
 import 'package:flutter/material.dart';
 
-/// A custom clipper that creates wavy edges on top and bottom
-/// to give a paper/receipt-like appearance.
+/// A custom clipper that creates wavy edges on bottom only
+/// with rounded corners on top, to give a paper/receipt-like appearance.
 class WavePaperClipper extends CustomClipper<Path> {
   final double waveHeight;
   final double waveWidth;
+  final double topRadius;
 
-  WavePaperClipper({this.waveHeight = 8, this.waveWidth = 16});
+  WavePaperClipper({
+    this.waveHeight = 8,
+    this.waveWidth = 16,
+    this.topRadius = 16,
+  });
 
   @override
   Path getClip(Size size) {
     final path = Path();
     final waveCount = (size.width / waveWidth).ceil();
 
-    // Start at top-left
-    path.moveTo(0, waveHeight);
+    // Start at top-left, after the rounded corner
+    path.moveTo(0, topRadius);
 
-    // Top wavy edge - semi-circles (scalloped edge)
-    for (int i = 0; i < waveCount; i++) {
-      final startX = i * waveWidth;
-      final endX = ((i + 1) * waveWidth).clamp(0.0, size.width);
-      final midX = (startX + endX) / 2;
+    // Top-left rounded corner
+    path.quadraticBezierTo(0, 0, topRadius, 0);
 
-      // Draw a smooth arc upward
-      path.quadraticBezierTo(midX, 0, endX, waveHeight);
-    }
+    // Top straight edge
+    path.lineTo(size.width - topRadius, 0);
 
-    // Right edge
+    // Top-right rounded corner
+    path.quadraticBezierTo(size.width, 0, size.width, topRadius);
+
+    // Right edge down to bottom wave area
     path.lineTo(size.width, size.height - waveHeight);
 
     // Bottom wavy edge - semi-circles (scalloped edge)
@@ -40,7 +44,7 @@ class WavePaperClipper extends CustomClipper<Path> {
     }
 
     // Left edge back to start
-    path.lineTo(0, waveHeight);
+    path.lineTo(0, topRadius);
     path.close();
 
     return path;
@@ -50,13 +54,16 @@ class WavePaperClipper extends CustomClipper<Path> {
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }
 
-/// A widget that wraps content with wavy paper edges
+/// A widget that wraps content with rounded top corners and wavy bottom edge
 class WavePaperContainer extends StatelessWidget {
   final Widget child;
   final Color color;
   final double waveHeight;
   final double waveWidth;
+  final double topRadius;
   final List<BoxShadow>? boxShadow;
+  final Color? borderColor;
+  final double borderWidth;
 
   const WavePaperContainer({
     super.key,
@@ -64,7 +71,10 @@ class WavePaperContainer extends StatelessWidget {
     this.color = Colors.white,
     this.waveHeight = 6,
     this.waveWidth = 12,
+    this.topRadius = 16,
     this.boxShadow,
+    this.borderColor,
+    this.borderWidth = 1,
   });
 
   @override
@@ -74,14 +84,21 @@ class WavePaperContainer extends StatelessWidget {
         color: color,
         waveHeight: waveHeight,
         waveWidth: waveWidth,
+        topRadius: topRadius,
         boxShadow: boxShadow,
+        borderColor: borderColor,
+        borderWidth: borderWidth,
       ),
       child: ClipPath(
-        clipper: WavePaperClipper(waveHeight: waveHeight, waveWidth: waveWidth),
+        clipper: WavePaperClipper(
+          waveHeight: waveHeight,
+          waveWidth: waveWidth,
+          topRadius: topRadius,
+        ),
         child: Container(
           color: color,
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: waveHeight),
+            padding: EdgeInsets.only(bottom: waveHeight),
             child: child,
           ),
         ),
@@ -94,34 +111,55 @@ class _WavePaperShadowPainter extends CustomPainter {
   final Color color;
   final double waveHeight;
   final double waveWidth;
+  final double topRadius;
   final List<BoxShadow>? boxShadow;
+  final Color? borderColor;
+  final double borderWidth;
 
   _WavePaperShadowPainter({
     required this.color,
     required this.waveHeight,
     required this.waveWidth,
+    required this.topRadius,
     this.boxShadow,
+    this.borderColor,
+    this.borderWidth = 1,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (boxShadow == null || boxShadow!.isEmpty) return;
-
     final clipper = WavePaperClipper(
       waveHeight: waveHeight,
       waveWidth: waveWidth,
+      topRadius: topRadius,
     );
     final path = clipper.getClip(size);
 
-    for (final shadow in boxShadow!) {
-      final shadowPaint = Paint()
-        ..color = shadow.color
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, shadow.blurRadius / 2);
+    // Draw shadows
+    if (boxShadow != null && boxShadow!.isNotEmpty) {
+      for (final shadow in boxShadow!) {
+        final shadowPaint = Paint()
+          ..color = shadow.color
+          ..maskFilter = MaskFilter.blur(
+            BlurStyle.normal,
+            shadow.blurRadius / 2,
+          );
 
-      canvas.save();
-      canvas.translate(shadow.offset.dx, shadow.offset.dy);
-      canvas.drawPath(path, shadowPaint);
-      canvas.restore();
+        canvas.save();
+        canvas.translate(shadow.offset.dx, shadow.offset.dy);
+        canvas.drawPath(path, shadowPaint);
+        canvas.restore();
+      }
+    }
+
+    // Draw border
+    if (borderColor != null) {
+      final borderPaint = Paint()
+        ..color = borderColor!
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = borderWidth;
+
+      canvas.drawPath(path, borderPaint);
     }
   }
 

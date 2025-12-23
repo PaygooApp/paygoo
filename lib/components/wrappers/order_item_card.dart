@@ -4,6 +4,15 @@ import 'package:paygoo/components/atoms/app_checkbox.dart';
 import 'package:paygoo/components/atoms/app_counter.dart';
 import 'package:paygoo/tokens/token_primitive_mode1.dart';
 
+/// Layout style for order item cards
+enum OrderItemLayoutStyle {
+  /// Each card is separate with its own shadow and border radius
+  cards,
+
+  /// All cards grouped in a container (like a note/receipt)
+  grouped,
+}
+
 class OrderItemCard extends StatefulWidget {
   const OrderItemCard({
     super.key,
@@ -17,6 +26,7 @@ class OrderItemCard extends StatefulWidget {
     this.checkboxStyle = AppCheckboxStyle.circular,
     this.showSelectedBorder = true,
     this.enableTapAnimation = true,
+    this.layoutStyle = OrderItemLayoutStyle.grouped,
   });
 
   final String itemName;
@@ -34,6 +44,9 @@ class OrderItemCard extends StatefulWidget {
   final AppCheckboxStyle checkboxStyle;
   final bool showSelectedBorder;
   final bool enableTapAnimation;
+
+  /// Layout style for the card
+  final OrderItemLayoutStyle layoutStyle;
 
   @override
   State<OrderItemCard> createState() => _OrderItemCardState();
@@ -95,77 +108,120 @@ class _OrderItemCardState extends State<OrderItemCard>
 
   @override
   Widget build(BuildContext context) {
+    final content = _buildContent(context);
+
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) =>
           Transform.scale(scale: _scaleAnimation.value, child: child),
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(
-          horizontal: TokenPrimitiveMode1.scale300.toDouble(),
-          vertical: TokenPrimitiveMode1.scale300.toDouble(),
-        ),
-        color: Theme.of(context).colorScheme.surface,
-        child: Row(
-          children: [
-            // Tappable area: checkbox + item details (content only, no fill)
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTapDown: _onTapDown,
-              onTapUp: _onTapUp,
-              onTapCancel: _onTapCancel,
-              child: Row(
+      child: widget.layoutStyle == OrderItemLayoutStyle.cards
+          ? _buildCardContainer(context, content)
+          : _buildGroupedContainer(context, content),
+    );
+  }
+
+  /// Builds the card content (checkbox, item details, counter)
+  Widget _buildContent(BuildContext context) {
+    return Row(
+      children: [
+        // Tappable area: checkbox + item details (content only, no fill)
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapDown: _onTapDown,
+          onTapUp: _onTapUp,
+          onTapCancel: _onTapCancel,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppCheckbox(
+                value: widget.isSelected,
+                onChanged: null,
+                style: widget.checkboxStyle,
+              ),
+              SizedBox(width: TokenPrimitiveMode1.scale300.toDouble()),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  AppCheckbox(
-                    value: widget.isSelected,
-                    onChanged: null,
-                    style: widget.checkboxStyle,
+                  Text(
+                    widget.itemName,
+                    style: Theme.of(context).textTheme.titleSmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(width: TokenPrimitiveMode1.scale300.toDouble()),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        widget.itemName,
-                        style: Theme.of(context).textTheme.titleSmall,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: TokenPrimitiveMode1.scale100.toDouble()),
-                      Text(
-                        widget.price,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: TokenPrimitiveMode1.gray500,
-                        ),
-                      ),
-                    ],
+                  SizedBox(height: TokenPrimitiveMode1.scale100.toDouble()),
+                  Text(
+                    widget.price,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: TokenPrimitiveMode1.gray500,
+                    ),
                   ),
                 ],
               ),
-            ),
+            ],
+          ),
+        ),
 
-            // Spacer pushes counter to the right
-            const Spacer(),
+        // Spacer pushes counter to the right
+        const Spacer(),
 
-            // Counter (right side) - NOT tappable for toggle
-            AppCounter(
-              value: widget.selectedQuantity,
-              maxValue: widget.availableQuantity,
-              onChanged: widget.onQuantityChanged,
-              isActive: widget.isSelected,
-              style: AppCounterStyle(
-                height: 34.0,
-                minWidth: 34.0,
-                buttonSize: 24.0,
-                iconSize: 18.0,
-                padding: 0.0,
-              ),
-            ),
-          ],
+        // Counter (right side) - NOT tappable for toggle
+        AppCounter(
+          value: widget.selectedQuantity,
+          maxValue: widget.availableQuantity,
+          onChanged: widget.onQuantityChanged,
+          isActive: widget.isSelected,
+          style: AppCounterStyle(
+            height: 34.0,
+            minWidth: 34.0,
+            buttonSize: 24.0,
+            iconSize: 18.0,
+            padding: 0.0,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Builds the container for grouped layout (simple row in a container)
+  Widget _buildGroupedContainer(BuildContext context, Widget content) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: TokenPrimitiveMode1.scale300.toDouble(),
+        vertical: TokenPrimitiveMode1.scale300.toDouble(),
+      ),
+      color: Theme.of(context).colorScheme.surface,
+      child: content,
+    );
+  }
+
+  /// Builds the container for cards layout (individual card with shadow and border)
+  Widget _buildCardContainer(BuildContext context, Widget content) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(TokenPrimitiveMode1.scale300.toDouble()),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(
+          TokenPrimitiveMode1.borderRadiuslg.toDouble(),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x0C000000),
+            blurRadius: 35,
+            offset: Offset(0, 6),
+            spreadRadius: 0,
+          ),
+        ],
+        border: Border.all(
+          color: (widget.isSelected && widget.showSelectedBorder)
+              ? Theme.of(context).colorScheme.primary
+              : TokenPrimitiveMode1.gray200,
+          width: 1,
         ),
       ),
+      child: content,
     );
   }
 }

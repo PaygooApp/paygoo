@@ -13,11 +13,20 @@ import 'package:paygoo/tokens/token_primitive_mode1.dart';
 import 'package:paygoo/utils/order_calculator.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, this.enableStickyVenueHeader = true});
+  const HomeScreen({
+    super.key,
+    this.enableStickyVenueHeader = true,
+    this.orderItemLayoutStyle = OrderItemLayoutStyle.grouped,
+  });
 
   /// When true, the VenueTableCard becomes a sticky header with glass effect
   /// when scrolling down. When false, it scrolls normally with the content.
   final bool enableStickyVenueHeader;
+
+  /// Layout style for order items:
+  /// - [OrderItemLayoutStyle.cards] - Each item is a separate card with shadow
+  /// - [OrderItemLayoutStyle.grouped] - All items grouped in a wave paper container
+  final OrderItemLayoutStyle orderItemLayoutStyle;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -213,6 +222,123 @@ class _HomeScreenState extends State<HomeScreen>
       (_scrollOffset >= _stickyThreshold ||
           _stickyAnimationController.value > 0);
 
+  /// Builds the order items list based on the selected layout style
+  Widget _buildOrderItemsList(BuildContext context) {
+    if (widget.orderItemLayoutStyle == OrderItemLayoutStyle.grouped) {
+      return _buildGroupedLayout(context);
+    } else {
+      return _buildCardsLayout(context);
+    }
+  }
+
+  /// Builds the grouped layout with wave paper container
+  Widget _buildGroupedLayout(BuildContext context) {
+    return WavePaperContainer(
+      color: Theme.of(context).colorScheme.surface,
+      waveHeight: 10,
+      waveWidth: 20,
+      topRadius: 16,
+      borderColor: TokenPrimitiveMode1.gray200,
+      borderWidth: 1,
+      boxShadow: [
+        BoxShadow(
+          color: Color(0x0A000000),
+          blurRadius: 6,
+          offset: Offset(0, -2),
+          spreadRadius: 0,
+        ),
+        BoxShadow(
+          color: Color(0x10000000),
+          blurRadius: 8,
+          offset: Offset(0, 3),
+          spreadRadius: 0,
+        ),
+      ],
+      child: Column(
+        children: [
+          ...OrderItemsMock.items.asMap().entries.map((entry) {
+            final index = entry.key;
+            final item = entry.value;
+            final selection = _selections[item.id]!;
+            final isLast = index == OrderItemsMock.items.length - 1;
+            return Column(
+              children: [
+                OrderItemCard(
+                  itemName: item.name,
+                  price: item.price,
+                  isSelected: selection.isSelected,
+                  onSelectedChanged: (value) => setState(() {
+                    final current = _selections[item.id]!;
+                    _selections[item.id] = current.copyWith(
+                      isSelected: value,
+                      selectedQuantity: value ? current.selectedQuantity : 1,
+                    );
+                  }),
+                  availableQuantity: item.availableQuantity,
+                  selectedQuantity: selection.selectedQuantity,
+                  onQuantityChanged: (value) => setState(() {
+                    final current = _selections[item.id]!;
+                    _selections[item.id] = current.copyWith(
+                      selectedQuantity: value,
+                    );
+                  }),
+                  showSelectedBorder: false,
+                  enableTapAnimation: true,
+                  layoutStyle: OrderItemLayoutStyle.grouped,
+                ),
+                if (!isLast)
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: TokenPrimitiveMode1.gray200,
+                    indent: 0,
+                    endIndent: 0,
+                  ),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the cards layout with individual cards
+  Widget _buildCardsLayout(BuildContext context) {
+    return Column(
+      children: [
+        ...OrderItemsMock.items.map((item) {
+          final selection = _selections[item.id]!;
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: OrderItemCard(
+              itemName: item.name,
+              price: item.price,
+              isSelected: selection.isSelected,
+              onSelectedChanged: (value) => setState(() {
+                final current = _selections[item.id]!;
+                _selections[item.id] = current.copyWith(
+                  isSelected: value,
+                  selectedQuantity: value ? current.selectedQuantity : 1,
+                );
+              }),
+              availableQuantity: item.availableQuantity,
+              selectedQuantity: selection.selectedQuantity,
+              onQuantityChanged: (value) => setState(() {
+                final current = _selections[item.id]!;
+                _selections[item.id] = current.copyWith(
+                  selectedQuantity: value,
+                );
+              }),
+              showSelectedBorder: false,
+              enableTapAnimation: true,
+              layoutStyle: OrderItemLayoutStyle.cards,
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -307,79 +433,8 @@ class _HomeScreenState extends State<HomeScreen>
                           ],
                         ),
                         SizedBox(height: 16),
-                        // Order list wrapped in a wave paper container
-                        WavePaperContainer(
-                          color: Theme.of(context).colorScheme.surface,
-                          waveHeight: 10,
-                          waveWidth: 20,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x10000000),
-                              blurRadius: 8,
-                              offset: Offset(0, -3),
-                              spreadRadius: 0,
-                            ),
-                            BoxShadow(
-                              color: Color(0x10000000),
-                              blurRadius: 8,
-                              offset: Offset(0, 3),
-                              spreadRadius: 0,
-                            ),
-                          ],
-                          child: Column(
-                            children: [
-                              ...OrderItemsMock.items.asMap().entries.map((
-                                entry,
-                              ) {
-                                final index = entry.key;
-                                final item = entry.value;
-                                final selection = _selections[item.id]!;
-                                final isLast =
-                                    index == OrderItemsMock.items.length - 1;
-                                return Column(
-                                  children: [
-                                    OrderItemCard(
-                                      itemName: item.name,
-                                      price: item.price,
-                                      isSelected: selection.isSelected,
-                                      onSelectedChanged: (value) => setState(() {
-                                        // Get current state to avoid stale closure
-                                        final current = _selections[item.id]!;
-                                        _selections[item.id] = current.copyWith(
-                                          isSelected: value,
-                                          // Reset to 1 when deselecting
-                                          selectedQuantity: value
-                                              ? current.selectedQuantity
-                                              : 1,
-                                        );
-                                      }),
-                                      availableQuantity: item.availableQuantity,
-                                      selectedQuantity:
-                                          selection.selectedQuantity,
-                                      onQuantityChanged: (value) => setState(() {
-                                        // Get current state to avoid stale closure
-                                        final current = _selections[item.id]!;
-                                        _selections[item.id] = current.copyWith(
-                                          selectedQuantity: value,
-                                        );
-                                      }),
-                                      showSelectedBorder: false,
-                                      enableTapAnimation: true,
-                                    ),
-                                    if (!isLast)
-                                      Divider(
-                                        height: 1,
-                                        thickness: 1,
-                                        color: TokenPrimitiveMode1.gray200,
-                                        indent: 0,
-                                        endIndent: 0,
-                                      ),
-                                  ],
-                                );
-                              }),
-                            ],
-                          ),
-                        ),
+                        // Order list - layout depends on style
+                        _buildOrderItemsList(context),
                         SizedBox(height: 30),
                       ],
                     ),

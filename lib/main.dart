@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paygoo/components/wrappers/order_item_card.dart';
 import 'package:paygoo/screens/home_screen.dart';
 import 'package:paygoo/utils/theme/theme.dart';
 
@@ -15,7 +16,9 @@ class App extends StatelessWidget {
       themeMode: ThemeMode.light,
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
-      home: const HomeScreen(),
+      home: const HomeScreen(
+        orderItemLayoutStyle: OrderItemLayoutStyle.grouped,
+      ),
     );
   }
 }
