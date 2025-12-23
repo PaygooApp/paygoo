@@ -174,7 +174,9 @@ class _OrderItemCardState extends State<OrderItemCard>
               style: AppCounterStyle(
                 height: 34.0,
                 minWidth: 34.0,
-                buttonSize: 36.0,
+                buttonSize: 24.0,
+                iconSize: 18.0,
+                padding: 0.0,
               ),
             ),
           ],

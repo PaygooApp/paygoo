@@ -164,50 +164,72 @@ class BottomSummaryCard extends StatelessWidget {
                   const SizedBox(height: 8),
                 ],
               ],
-              // Sliding action button with oversized thumb
+              // Sliding action button with checkmark indicator
               SizedBox(
-                height: 64, // Extra height to accommodate larger button
+                height: 64,
                 child: Center(
-                  child: CircleSlideToActionButton(
-                    // Full width of card (screen width - horizontal padding 20*2)
-                    width: MediaQuery.of(context).size.width - 40,
-                    height: 50,
-                    parentBoxRadiusValue: 50,
-                    circleSlidingButtonSize: 50,
-                    initialSlidingActionLabel:
-                        'Swipe to pay ${_formatCurrency(_totalAmount)}',
-                    finalSlidingActionLabel: 'Processing...',
-                    initialSlidingActionLabelTextStyle: GoogleFonts.dmSans(
-                      fontSize: TokenPrimitiveMode1.typographyfontSizebodylg
-                          .toDouble(),
-                      fontWeight: FontWeight.w600,
-                      color: TokenPrimitiveMode1.gray800,
-                    ),
-                    finalSlidingActionLabelTextStyle: GoogleFonts.dmSans(
-                      fontSize: TokenPrimitiveMode1.typographyfontSizebodylg
-                          .toDouble(),
-                      fontWeight: FontWeight.w600,
-                      color: TokenPrimitiveMode1.gray800,
-                    ),
-                    circleSlidingButtonIcon: const Icon(
-                      Icons.keyboard_double_arrow_right_outlined,
-                      color: TokenPrimitiveMode1.basewhite,
-                    ),
-                    parentBoxBackgroundColor: TokenPrimitiveMode1.primary50,
-                    parentBoxDisableBackgroundColor: Colors.grey,
-                    /*  parentBoxGradientBackgroundColor:
-                  LinearGradient(colors: [Colors.red, Colors.white]),
-              parentBoxDisableGradientBackgroundColor:
-                  LinearGradient(colors: [Colors.red, Colors.white]),*/
-                    circleSlidingButtonBackgroundColor:
-                        TokenPrimitiveMode1.primary500,
-                    isEnable: true,
-                    onSlideActionCompleted: () {
-                      print("Sliding action completed");
-                    },
-                    onSlideActionCanceled: () {
-                      print("Sliding action cancelled");
-                    },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      CircleSlideToActionButton(
+                        // Width accounts for checkmark circle on right
+                        width: MediaQuery.of(context).size.width - 40,
+                        height: 50,
+                        parentBoxRadiusValue: 50,
+                        circleSlidingButtonSize: 50,
+                        initialSlidingActionLabel:
+                            'Swipe to pay ${_formatCurrency(_totalAmount)}',
+                        finalSlidingActionLabel: 'Processing...',
+                        initialSlidingActionLabelTextStyle: GoogleFonts.dmSans(
+                          fontSize: TokenPrimitiveMode1.typographyfontSizebodylg
+                              .toDouble(),
+                          fontWeight: FontWeight.w600,
+                          color: TokenPrimitiveMode1.gray800,
+                        ),
+                        finalSlidingActionLabelTextStyle: GoogleFonts.dmSans(
+                          fontSize: TokenPrimitiveMode1.typographyfontSizebodylg
+                              .toDouble(),
+                          fontWeight: FontWeight.w600,
+                          color: TokenPrimitiveMode1.gray800,
+                        ),
+                        circleSlidingButtonIcon: const Icon(
+                          Icons.keyboard_double_arrow_right_outlined,
+                          color: TokenPrimitiveMode1.basewhite,
+                        ),
+                        parentBoxBackgroundColor: TokenPrimitiveMode1.primary50,
+                        parentBoxDisableBackgroundColor: Colors.grey,
+                        circleSlidingButtonBackgroundColor:
+                            TokenPrimitiveMode1.primary500,
+                        isEnable: true,
+                        onSlideActionCompleted: () {
+                          print("Sliding action completed");
+                        },
+                        onSlideActionCanceled: () {
+                          print("Sliding action cancelled");
+                        },
+                      ),
+                      // Checkmark circle on the right
+                      Positioned(
+                        right: 0,
+                        child: Container(
+                          width: 46,
+                          height: 46,
+                          decoration: BoxDecoration(
+                            color: TokenPrimitiveMode1.basewhite,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: TokenPrimitiveMode1.gray100,
+                              width: 1,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.check,
+                            color: TokenPrimitiveMode1.baseblack,
+                            size: 24,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

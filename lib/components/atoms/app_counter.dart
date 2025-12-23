@@ -200,6 +200,7 @@ class _AppCounterState extends State<AppCounter>
           child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _buildControlButton(
                 icon: Icons.remove_rounded,
@@ -248,14 +249,19 @@ class _AppCounterState extends State<AppCounter>
         sizeFactor: _expandAnimation,
         axis: Axis.horizontal,
         axisAlignment: axisAlignment,
-        child: _CounterIconButton(
-          icon: icon,
-          onTap: isDisabled ? null : onTap,
-          isDisabled: isDisabled,
-          size: _style.buttonSize,
-          iconSize: _style.iconSize,
-          activeColor: _style.activeIconColor,
-          disabledColor: _style.disabledIconColor,
+        child: SizedBox(
+          height: _style.height,
+          child: Center(
+            child: _CounterIconButton(
+              icon: icon,
+              onTap: isDisabled ? null : onTap,
+              isDisabled: isDisabled,
+              size: _style.buttonSize,
+              iconSize: _style.iconSize,
+              activeColor: _style.activeIconColor,
+              disabledColor: _style.disabledIconColor,
+            ),
+          ),
         ),
       ),
     );
@@ -265,7 +271,7 @@ class _AppCounterState extends State<AppCounter>
     return Expanded(
       child: Center(
         child: Padding(
-          padding: EdgeInsets.all(_style.padding),
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
           child: Text(
             _displayValue.toString(),
             textAlign: TextAlign.center,
