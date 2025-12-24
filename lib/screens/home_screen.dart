@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:paygoo/components/atoms/overscroll_message.dart';
 import 'package:paygoo/components/atoms/wave_paper_clipper.dart';
+import 'package:paygoo/components/modals/custom_tip_modal.dart';
 import 'package:paygoo/components/wrappers/bottom_summary_card.dart';
 import 'package:paygoo/components/wrappers/order_item_card.dart';
 import 'package:paygoo/components/wrappers/venu_table_card.dart';
@@ -39,6 +40,9 @@ class _HomeScreenState extends State<HomeScreen>
 
   // Track selected tip option index
   int? _selectedTipIndex;
+
+  // Track custom tip percentage (when user selects "Custom")
+  double? _customTipPercentage;
 
   // Track overscroll amount for fun messages
   double _overscrollAmount = 0.0;
@@ -126,6 +130,21 @@ class _HomeScreenState extends State<HomeScreen>
     _stickyAnimationController.removeStatusListener(_onAnimationStatusChange);
     _stickyAnimationController.dispose();
     super.dispose();
+  }
+
+  /// Show the custom tip modal
+  Future<void> _showCustomTipModal() async {
+    final result = await CustomTipModal.show(
+      context,
+      baseAmount: _calculator.itemTotal,
+      initialTipPercentage: _customTipPercentage,
+    );
+    if (result != null) {
+      setState(() {
+        _customTipPercentage = result;
+        _selectedTipIndex = 3; // Select "Custom" option
+      });
+    }
   }
 
   /// Handle scroll notifications to track overscroll
@@ -528,11 +547,13 @@ class _HomeScreenState extends State<HomeScreen>
                   selectedItemsTotal: _calculator.itemTotal,
                   isEnabled: _calculator.hasAnySelected,
                   selectedTipIndex: _selectedTipIndex,
+                  customTipPercentage: _customTipPercentage,
                   onTipChanged: (index) {
                     setState(() {
                       _selectedTipIndex = index;
                     });
                   },
+                  onCustomTipTapped: () => _showCustomTipModal(),
                   onSlideCompleted: () {
                     // TODO: Handle payment
                   },

@@ -13,6 +13,8 @@ class BottomSummaryCard extends StatelessWidget {
   final bool isEnabled;
   final int? selectedTipIndex;
   final ValueChanged<int?>? onTipChanged;
+  final double? customTipPercentage;
+  final VoidCallback? onCustomTipTapped;
 
   const BottomSummaryCard({
     super.key,
@@ -23,6 +25,8 @@ class BottomSummaryCard extends StatelessWidget {
     this.isEnabled = true,
     this.selectedTipIndex,
     this.onTipChanged,
+    this.customTipPercentage,
+    this.onCustomTipTapped,
   });
 
   // Tip options for the selector
@@ -30,13 +34,20 @@ class BottomSummaryCard extends StatelessWidget {
     OptionCardItem(emoji: '😎', label: '5%', value: 5),
     OptionCardItem(emoji: '🎉', label: '10%', value: 10),
     OptionCardItem(emoji: '🔥', label: '15%', value: 15),
-    OptionCardItem(emoji: '✏️', label: 'Custom', value: null),
+    OptionCardItem(
+      emoji: '✏️',
+      label: 'Custom',
+      value: -1,
+    ), // -1 indicates custom
   ];
 
   double get _tipAmount {
     if (selectedTipIndex == null) return 0.0;
     final option = tipOptions[selectedTipIndex!];
-    if (option.value == null) return 0.0; // Custom - TODO: implement
+    // Custom tip: use customTipPercentage
+    if (option.value == -1) {
+      return selectedItemsTotal * (customTipPercentage ?? 0) / 100;
+    }
     return selectedItemsTotal * (option.value as int) / 100;
   }
 
@@ -44,6 +55,22 @@ class BottomSummaryCard extends StatelessWidget {
 
   String _formatCurrency(double amount) {
     return '\$${amount.toStringAsFixed(2)}';
+  }
+
+  /// Build tip options with dynamic custom label
+  List<OptionCardItem> _buildTipOptions() {
+    return [
+      const OptionCardItem(emoji: '😎', label: '5%', value: 5),
+      const OptionCardItem(emoji: '🎉', label: '10%', value: 10),
+      const OptionCardItem(emoji: '🔥', label: '15%', value: 15),
+      OptionCardItem(
+        emoji: '✏️',
+        label: customTipPercentage != null
+            ? '${customTipPercentage!.round()}%'
+            : 'Custom',
+        value: -1,
+      ),
+    ];
   }
 
   @override
@@ -112,9 +139,16 @@ class BottomSummaryCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 // Tip selector cards
                 OptionCardSelector(
-                  options: tipOptions,
+                  options: _buildTipOptions(),
                   selectedIndex: selectedTipIndex,
-                  onChanged: onTipChanged,
+                  onChanged: (index) {
+                    // If Custom is tapped, only trigger modal (don't select yet)
+                    if (index == 3) {
+                      onCustomTipTapped?.call();
+                      return; // Don't call onTipChanged - modal will handle it
+                    }
+                    onTipChanged?.call(index);
+                  },
                 ),
                 const SizedBox(height: 12),
                 // Service Fee row
