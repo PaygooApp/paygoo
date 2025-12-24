@@ -238,8 +238,9 @@ class _HomeScreenState extends State<HomeScreen>
       waveHeight: 10,
       waveWidth: 20,
       topRadius: 16,
-      borderColor: TokenPrimitiveMode1.gray200,
-      borderWidth: 1,
+      //TODO: explore this version
+      // borderColor: TokenPrimitiveMode1.gray200,
+      // borderWidth: 1,
       boxShadow: [
         BoxShadow(
           color: Color(0x0A000000),
@@ -294,6 +295,7 @@ class _HomeScreenState extends State<HomeScreen>
                     indent: 0,
                     endIndent: 0,
                   ),
+                if (isLast) SizedBox(height: 14),
               ],
             );
           }),
