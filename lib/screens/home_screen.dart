@@ -1,15 +1,13 @@
-import 'dart:ui' show ImageFilter;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:paygoo/components/atoms/overscroll_message.dart';
 import 'package:paygoo/components/atoms/section_header.dart';
 import 'package:paygoo/components/atoms/wave_paper_clipper.dart';
 import 'package:paygoo/components/modals/custom_tip_modal.dart';
 import 'package:paygoo/components/wrappers/bottom_summary_card.dart';
 import 'package:paygoo/components/wrappers/order_item_card.dart';
+import 'package:paygoo/components/wrappers/overscroll_container.dart';
 import 'package:paygoo/components/wrappers/payment_methods_card.dart';
-import 'package:paygoo/components/wrappers/venu_table_card.dart';
+import 'package:paygoo/components/wrappers/sticky_venue_header.dart';
 import 'package:paygoo/mocks/order_items_mock.dart';
 import 'package:paygoo/models/order_item.dart';
 import 'package:paygoo/tokens/token_primitive_mode1.dart';
@@ -35,34 +33,15 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> {
   // Map of item id -> selection state
   late Map<String, OrderItemSelection> _selections;
 
   int? _selectedTipIndex;
   double? _customTipPercentage;
 
-  double _overscrollAmount = 0.0;
-
-  // Track if haptic has been triggered for this overscroll session
-  bool _hapticTriggered = false;
-
-  // Track overscroll count to change message each time
-  int _overscrollCount = 0;
-
-  // Threshold for triggering haptic feedback
-  static const double _hapticThreshold = 40.0;
-
   // Scroll controller for tracking scroll position
   late ScrollController _scrollController;
-
-  // Animation controller for sticky header transition
-  late AnimationController _stickyAnimationController;
-  double _scrollOffset = 0.0;
-
-  double get _stickyThreshold => _coverHeight - _cardOverlap;
-  double _topPadding = 0.0;
 
   @override
   void initState() {
@@ -74,53 +53,11 @@ class _HomeScreenState extends State<HomeScreen>
     };
 
     _scrollController = ScrollController();
-    _scrollController.addListener(_onScroll);
-
-    _stickyAnimationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 200),
-    );
-    // Listen to animation status to trigger rebuild when animation completes
-    _stickyAnimationController.addStatusListener(_onAnimationStatusChange);
-  }
-
-  void _onAnimationStatusChange(AnimationStatus status) {
-    // Trigger rebuild when animation completes to hide/show header
-    if (status == AnimationStatus.dismissed ||
-        status == AnimationStatus.completed) {
-      setState(() {});
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _topPadding = MediaQuery.of(context).padding.top;
-  }
-
-  void _onScroll() {
-    final offset = _scrollController.offset;
-    if (offset != _scrollOffset) {
-      setState(() {
-        _scrollOffset = offset;
-      });
-
-      // Animate the sticky header based on scroll position
-      if (offset >= _stickyThreshold && _stickyAnimationController.value < 1) {
-        _stickyAnimationController.forward();
-      } else if (offset < _stickyThreshold &&
-          _stickyAnimationController.value > 0) {
-        _stickyAnimationController.reverse();
-      }
-    }
   }
 
   @override
   void dispose() {
-    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
-    _stickyAnimationController.removeStatusListener(_onAnimationStatusChange);
-    _stickyAnimationController.dispose();
     super.dispose();
   }
 
@@ -137,37 +74,6 @@ class _HomeScreenState extends State<HomeScreen>
         _selectedTipIndex = 3; // Select "Custom" option
       });
     }
-  }
-
-  /// Handle scroll notifications to track overscroll
-  bool _handleScrollNotification(ScrollNotification notification) {
-    if (notification is ScrollUpdateNotification) {
-      final pixels = notification.metrics.pixels;
-      if (pixels < 0) {
-        final newOverscroll = -pixels;
-
-        // Trigger haptic once when crossing threshold
-        if (!_hapticTriggered && newOverscroll >= _hapticThreshold) {
-          HapticFeedback.lightImpact();
-          _hapticTriggered = true;
-        }
-
-        // Only setState if value changed significantly (performance optimization)
-        if ((newOverscroll - _overscrollAmount).abs() > 1) {
-          setState(() {
-            _overscrollAmount = newOverscroll;
-          });
-        }
-      } else if (_overscrollAmount != 0) {
-        // Reset when scroll returns to normal and increment message counter
-        _hapticTriggered = false;
-        setState(() {
-          _overscrollAmount = 0;
-          _overscrollCount++;
-        });
-      }
-    }
-    return false;
   }
 
   /// Order calculator instance - creates fresh instance on each access
@@ -210,28 +116,6 @@ class _HomeScreenState extends State<HomeScreen>
       }
     });
   }
-
-  // Height of the cover image
-  static const double _coverHeight = 200.0;
-  // How much VenueTableCard overlaps the cover (50% of card height ~60px)
-  static const double _cardOverlap = 40.0;
-
-  // Build the VenueTableCard widget (reused in both positions)
-  Widget _buildVenueTableCard() {
-    return VenueTableCard(
-      venueLogo: "venueLogo",
-      venueName: "Taverna Racilor",
-      tableNumber: "Table:8",
-      totalAmount: "\$263.17",
-    );
-  }
-
-  // Check if the sticky header should be visible
-  // Only show when feature is enabled AND (above threshold OR animation is running)
-  bool get _showStickyHeader =>
-      widget.enableStickyVenueHeader &&
-      (_scrollOffset >= _stickyThreshold ||
-          _stickyAnimationController.value > 0);
 
   /// Builds the order items list based on the selected layout style
   Widget _buildOrderItemsList(BuildContext context) {
@@ -354,197 +238,91 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Fixed message at top - revealed when content scrolls down
-          OverscrollMessage(
-            overscrollAmount: _overscrollAmount,
-            messageIndex: _overscrollCount,
-          ),
-          // Scrollable content
-          NotificationListener<ScrollNotification>(
-            onNotification: _handleScrollNotification,
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              physics: const BouncingScrollPhysics(),
-              // Add extra bottom padding when items are selected to account for BottomSummaryCard
-              padding: EdgeInsets.only(
-                bottom: _calculator.hasAnySelected ? 200 : 16,
-              ),
-              child: Column(
-                children: [
-                  // Cover image with overlapping VenueTableCard
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      // Cover image
-                      Container(
-                        height: _coverHeight,
-                        width: double.infinity,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/background_app.png'),
-                            fit: BoxFit.cover,
+    return StickyVenueHeader(
+      scrollController: _scrollController,
+      enableStickyHeader: widget.enableStickyVenueHeader,
+      builder: (context, coverSection, stickyOverlay) {
+        return Scaffold(
+          body: Stack(
+            children: [
+              // Scrollable content with overscroll messages
+              OverscrollContainer(
+                scrollController: _scrollController,
+                bottomPadding: _calculator.hasAnySelected ? 200 : 16,
+                child: Column(
+                  children: [
+                    // Cover image with overlapping VenueTableCard
+                    coverSection,
+                    // Spacing to account for the overlapping card
+                    const SizedBox(height: 64), // cardOverlap (40) + 24
+                    // Rest of content
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SectionHeader(
+                            title: "Pay Your Bill",
+                            actionText: _calculator.hasAnySelected
+                                ? "Deselect All"
+                                : "Select All",
+                            onActionTap: _calculator.hasAnySelected
+                                ? _deselectAll
+                                : _selectAll,
                           ),
-                        ),
-                      ),
-                      // VenueTableCard positioned to overlap bottom of cover
-                      // Crossfade with sticky header when feature is enabled
-                      Positioned(
-                        left: 16,
-                        right: 16,
-                        bottom: -_cardOverlap,
-                        child: widget.enableStickyVenueHeader
-                            ? AnimatedBuilder(
-                                animation: _stickyAnimationController,
-                                builder: (context, child) {
-                                  // Original card fades in as sticky header fades out
-                                  // opacity: 1 when animation is at 0, opacity: 0 when animation is at 1
-                                  return Opacity(
-                                    opacity:
-                                        1.0 - _stickyAnimationController.value,
-                                    child: child,
-                                  );
-                                },
-                                child: _buildVenueTableCard(),
-                              )
-                            : _buildVenueTableCard(),
-                      ),
-                    ],
-                  ),
-                  // Spacing to account for the overlapping card
-                  SizedBox(height: _cardOverlap + 24),
-                  // Rest of content
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SectionHeader(
-                          title: "Pay Your Bill",
-                          actionText: _calculator.hasAnySelected
-                              ? "Deselect All"
-                              : "Select All",
-                          onActionTap: _calculator.hasAnySelected
-                              ? _deselectAll
-                              : _selectAll,
-                        ),
-                        SizedBox(height: 16),
-                        // Order list - layout depends on style
-                        _buildOrderItemsList(context),
-                        SizedBox(height: 16),
-                        // Payment Methods section
-                        SectionHeader(title: "Payment Methods"),
-                        SizedBox(height: 16),
-                        const PaymentMethodsCard(),
-                        SizedBox(height: 30),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Sticky header with glass effect - appears when scrolling down past the threshold
-          if (_showStickyHeader)
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: AnimatedBuilder(
-                animation: _stickyAnimationController,
-                builder: (context, child) {
-                  final progress = _stickyAnimationController.value;
-                  // Scale from 0.85 to 1.0 as it animates in/out
-                  final scale = 0.85 + (0.15 * progress);
-                  // Slide down from -20 to 0 (and back up when disappearing)
-                  final slideOffset = -20.0 * (1 - progress);
-                  // Fade in/out with the animation
-                  final opacity = progress;
-
-                  return Opacity(
-                    opacity: opacity,
-                    child: Transform.translate(
-                      offset: Offset(0, slideOffset),
-                      child: Transform.scale(
-                        scale: scale,
-                        alignment: Alignment.topCenter,
-                        child: child,
-                      ),
-                    ),
-                  );
-                },
-                child: ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                    child: Container(
-                      padding: EdgeInsets.only(
-                        top: _topPadding + 8,
-                        left: 16,
-                        right: 16,
-                        bottom: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        // Semi-transparent background for glass effect
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.surface.withValues(alpha: 0.7),
-                        // Subtle border at the bottom for definition
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            width: 1,
-                          ),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 20,
-                            offset: const Offset(0, 4),
-                          ),
+                          SizedBox(height: 16),
+                          // Order list - layout depends on style
+                          _buildOrderItemsList(context),
+                          SizedBox(height: 16),
+                          // Payment Methods section
+                          SectionHeader(title: "Payment Methods"),
+                          SizedBox(height: 16),
+                          const PaymentMethodsCard(),
+                          SizedBox(height: 30),
                         ],
                       ),
-                      child: _buildVenueTableCard(),
+                    ),
+                  ],
+                ),
+              ),
+              // Sticky header with glass effect
+              if (stickyOverlay != null) stickyOverlay,
+              // Bottom summary card - slides in from bottom when items selected
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: AnimatedSlide(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  offset: _calculator.hasAnySelected
+                      ? Offset.zero
+                      : const Offset(0, 1), // Slide down when hidden
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 300),
+                    opacity: _calculator.hasAnySelected ? 1.0 : 0.0,
+                    child: BottomSummaryCard(
+                      selectedItemsTotal: _calculator.itemTotal,
+                      isEnabled: _calculator.hasAnySelected,
+                      selectedTipIndex: _selectedTipIndex,
+                      customTipPercentage: _customTipPercentage,
+                      onTipChanged: (index) {
+                        setState(() {
+                          _selectedTipIndex = index;
+                        });
+                      },
+                      onCustomTipTapped: () => _showCustomTipModal(),
+                      onSlideCompleted: () {
+                        // TODO: Handle payment
+                      },
                     ),
                   ),
                 ),
               ),
-            ),
-          // Bottom summary card - slides in from bottom when items selected
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: AnimatedSlide(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              offset: _calculator.hasAnySelected
-                  ? Offset.zero
-                  : const Offset(0, 1), // Slide down when hidden
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 300),
-                opacity: _calculator.hasAnySelected ? 1.0 : 0.0,
-                child: BottomSummaryCard(
-                  selectedItemsTotal: _calculator.itemTotal,
-                  isEnabled: _calculator.hasAnySelected,
-                  selectedTipIndex: _selectedTipIndex,
-                  customTipPercentage: _customTipPercentage,
-                  onTipChanged: (index) {
-                    setState(() {
-                      _selectedTipIndex = index;
-                    });
-                  },
-                  onCustomTipTapped: () => _showCustomTipModal(),
-                  onSlideCompleted: () {
-                    // TODO: Handle payment
-                  },
-                ),
-              ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
