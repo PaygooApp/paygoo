@@ -1,7 +1,10 @@
+import 'dart:io' show Platform;
 import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:paygoo/components/atoms/app_radio_button.dart';
 import 'package:paygoo/components/atoms/overscroll_message.dart';
 import 'package:paygoo/components/atoms/wave_paper_clipper.dart';
 import 'package:paygoo/components/modals/custom_tip_modal.dart';
@@ -71,6 +74,9 @@ class _HomeScreenState extends State<HomeScreen>
 
   // Safe area top padding (status bar height)
   double _topPadding = 0.0;
+
+  // Selected payment method index (0: Apple Pay, 1: Google Pay, 2: Cards)
+  int _selectedPaymentMethod = 0;
 
   @override
   void initState() {
@@ -230,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen>
       venueLogo: "venueLogo",
       venueName: "Taverna Racilor",
       tableNumber: "Table:8",
-      totalAmount: "\$55.50",
+      totalAmount: "\$263.17",
     );
   }
 
@@ -360,6 +366,156 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  /// Builds a payment method row item
+  Widget _buildPaymentMethodItem({
+    required int index,
+    required String title,
+    required Widget trailing,
+    required bool isLast,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        setState(() {
+          _selectedPaymentMethod = index;
+        });
+      },
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: TokenPrimitiveMode1.scale300.toDouble(),
+              vertical: 12,
+            ),
+            color: Theme.of(context).colorScheme.surface,
+            child: Row(
+              children: [
+                AppRadioButton(
+                  value: index,
+                  groupValue: _selectedPaymentMethod,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedPaymentMethod = value;
+                    });
+                  },
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                trailing,
+              ],
+            ),
+          ),
+          if (!isLast)
+            Divider(
+              height: 1,
+              thickness: 1,
+              color: TokenPrimitiveMode1.gray200,
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds a bordered box for payment method icons
+  Widget _buildPaymentIconBox({
+    required Widget child,
+    double? width,
+    double? height,
+  }) {
+    return Container(
+      width: width ?? 58,
+      height: height ?? 36,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: TokenPrimitiveMode1.gray300, width: 1),
+      ),
+      child: Center(child: child),
+    );
+  }
+
+  /// Builds the payment methods section
+  Widget _buildPaymentMethods() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0x0A000000),
+            blurRadius: 6,
+            offset: const Offset(0, -2),
+            spreadRadius: 0,
+          ),
+          BoxShadow(
+            color: const Color(0x10000000),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          // Apple Pay - iOS only
+          if (Platform.isIOS)
+            _buildPaymentMethodItem(
+              index: 0,
+              title: "Apple Pay",
+              trailing: _buildPaymentIconBox(
+                child: SvgPicture.asset(
+                  'assets/apple_pay.svg',
+                  height: 13,
+                  width: 29,
+                ),
+              ),
+              isLast: false,
+            ),
+          // Google Pay - Android only
+          if (Platform.isAndroid)
+            _buildPaymentMethodItem(
+              index: 1,
+              title: "Google Pay",
+              trailing: _buildPaymentIconBox(
+                child: SvgPicture.asset(
+                  'assets/g_pay.svg',
+                  height: 13,
+                  width: 29,
+                ),
+              ),
+              isLast: false,
+            ),
+          // Cards
+          _buildPaymentMethodItem(
+            index: 2,
+            title: "Card",
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildPaymentIconBox(
+                  child: SvgPicture.asset('assets/visa.svg', height: 13),
+                ),
+                const SizedBox(width: 8),
+                _buildPaymentIconBox(
+                  child: SvgPicture.asset('assets/mastercard.svg', height: 13),
+                ),
+              ],
+            ),
+            isLast: true,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -427,6 +583,7 @@ class _HomeScreenState extends State<HomeScreen>
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -456,6 +613,14 @@ class _HomeScreenState extends State<HomeScreen>
                         SizedBox(height: 16),
                         // Order list - layout depends on style
                         _buildOrderItemsList(context),
+                        SizedBox(height: 16),
+                        // Payment Methods section
+                        Text(
+                          "Payment Methods",
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                        SizedBox(height: 16),
+                        _buildPaymentMethods(),
                         SizedBox(height: 30),
                       ],
                     ),
