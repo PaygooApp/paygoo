@@ -11,7 +11,9 @@ import 'package:paygoo/components/wrappers/overscroll_container.dart';
 import 'package:paygoo/components/wrappers/payment_methods_card.dart';
 import 'package:paygoo/components/wrappers/sticky_venue_header.dart';
 import 'package:paygoo/mocks/order_items_mock.dart';
+import 'package:paygoo/mocks/payment_result_mock.dart';
 import 'package:paygoo/models/order_item.dart';
+import 'package:paygoo/screens/payment_result_screen.dart';
 import 'package:paygoo/tokens/token_primitive_mode1.dart';
 import 'package:paygoo/utils/order_calculator.dart';
 
@@ -304,10 +306,26 @@ class _HomeScreenState extends State<HomeScreen> {
                           SizedBox(height: 16),
                           const PaymentMethodsCard(),
                           SizedBox(height: 24),
-                          // Test button for InfoBottomModal
+                          // Test buttons
                           ElevatedButton(
                             onPressed: _showInfoModal,
                             child: Text('Test Info Modal'),
+                          ),
+                          const SizedBox(height: 12),
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => PaymentResultScreen(
+                                  config: PaymentResultConfig(
+                                    iconAsset: 'assets/Icon-Successful.svg',
+                                    title: 'Payment Successful',
+                                    paymentResult:
+                                        PaymentResultMock.successfulPayment,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            child: const Text('Test Payment Success'),
                           ),
                           SizedBox(height: 30),
                         ],
