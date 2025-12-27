@@ -5,52 +5,26 @@ import 'package:paygoo/components/atoms/app_button.dart';
 import 'package:paygoo/tokens/token_primitive_mode1.dart';
 
 /// Layout style for CTA buttons
-enum ModalButtonLayout {
-  /// Buttons stacked vertically (column)
-  column,
-
-  /// Buttons side by side (row)
-  row,
-}
+enum ModalButtonLayout { column, row }
 
 /// Configuration for a CTA button in the modal
 class ModalButtonConfig {
   final String text;
   final VoidCallback onPressed;
-  final bool isPrimary;
 
-  const ModalButtonConfig({
-    required this.text,
-    required this.onPressed,
-    this.isPrimary = true,
-  });
+  const ModalButtonConfig({required this.text, required this.onPressed});
 }
 
 /// A reusable bottom modal with slide-in animation, blur overlay,
 /// icon, title, description, and configurable CTA buttons.
 class InfoBottomModal extends StatefulWidget {
-  /// Icon widget to display (90x90), can be SVG, Image, or any widget
   final Widget icon;
-
-  /// Small subtitle text (14px) displayed above the title
-  final String? subtitle;
-
-  /// Main title text (24px)
+  final Widget? subtitle;
   final String title;
-
-  /// Description text (16px)
   final String description;
-
-  /// Primary CTA button (green)
   final ModalButtonConfig primaryButton;
-
-  /// Optional secondary CTA button (gray)
   final ModalButtonConfig? secondaryButton;
-
-  /// Layout style for buttons (row or column)
   final ModalButtonLayout buttonLayout;
-
-  /// Whether the modal can be dismissed by tapping outside
   final bool isDismissible;
 
   const InfoBottomModal({
@@ -69,7 +43,7 @@ class InfoBottomModal extends StatefulWidget {
   static Future<T?> show<T>(
     BuildContext context, {
     required Widget icon,
-    String? subtitle,
+    Widget? subtitle,
     required String title,
     required String description,
     required ModalButtonConfig primaryButton,
@@ -83,21 +57,16 @@ class InfoBottomModal extends StatefulWidget {
       barrierLabel: 'Dismiss',
       barrierColor: Colors.transparent,
       transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (context, animation, secondaryAnimation) {
-        return InfoBottomModal(
-          icon: icon,
-          subtitle: subtitle,
-          title: title,
-          description: description,
-          primaryButton: primaryButton,
-          secondaryButton: secondaryButton,
-          buttonLayout: buttonLayout,
-          isDismissible: isDismissible,
-        );
-      },
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        return child;
-      },
+      pageBuilder: (context, animation, secondaryAnimation) => InfoBottomModal(
+        icon: icon,
+        subtitle: subtitle,
+        title: title,
+        description: description,
+        primaryButton: primaryButton,
+        secondaryButton: secondaryButton,
+        buttonLayout: buttonLayout,
+        isDismissible: isDismissible,
+      ),
     );
   }
 
@@ -107,9 +76,9 @@ class InfoBottomModal extends StatefulWidget {
 
 class _InfoBottomModalState extends State<InfoBottomModal>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<Offset> _slideAnimation;
-  late Animation<double> _fadeAnimation;
+  late final AnimationController _controller;
+  late final Animation<Offset> _slideAnimation;
+  late final Animation<double> _fadeAnimation;
 
   @override
   void initState() {
@@ -125,8 +94,8 @@ class _InfoBottomModalState extends State<InfoBottomModal>
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _controller.forward();
@@ -140,104 +109,85 @@ class _InfoBottomModalState extends State<InfoBottomModal>
 
   Future<void> _dismiss([dynamic result]) async {
     await _controller.reverse();
-    if (mounted) {
-      Navigator.of(context).pop(result);
-    }
+    if (mounted) Navigator.of(context).pop(result);
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _controller,
-      builder: (context, child) {
-        return Stack(
-          children: [
-            // Blurred overlay background
-            GestureDetector(
-              onTap: widget.isDismissible ? () => _dismiss() : null,
-              child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: 8 * _fadeAnimation.value,
-                  sigmaY: 8 * _fadeAnimation.value,
-                ),
-                child: Container(
-                  color: Colors.black.withValues(
-                    alpha: 0.4 * _fadeAnimation.value,
-                  ),
+      builder: (context, child) => Stack(
+        children: [
+          // Blurred overlay background
+          GestureDetector(
+            onTap: widget.isDismissible ? _dismiss : null,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: 8 * _fadeAnimation.value,
+                sigmaY: 8 * _fadeAnimation.value,
+              ),
+              child: Container(
+                color: Colors.black.withValues(
+                  alpha: 0.4 * _fadeAnimation.value,
                 ),
               ),
             ),
-            // Modal content
-            child!,
-          ],
-        );
-      },
-      child: _buildModalContent(),
+          ),
+          // Modal content
+          child!,
+        ],
+      ),
+      child: _buildModalContent(context),
     );
   }
 
-  Widget _buildModalContent() {
+  Widget _buildModalContent(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return SlideTransition(
       position: _slideAnimation,
       child: Align(
         alignment: Alignment.bottomCenter,
         child: Container(
           width: double.infinity,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: TokenPrimitiveMode1.basewhite,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(24),
-              topRight: Radius.circular(24),
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
+                color: Color(0x26000000),
                 blurRadius: 20,
-                offset: const Offset(0, -4),
+                offset: Offset(0, -4),
               ),
             ],
           ),
-          child: Padding(
-            padding: EdgeInsets.only(
-              top: 24,
-              left: 24,
-              right: 24,
-              bottom: MediaQuery.of(context).padding.bottom,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Icon (90x90)
-                SizedBox(width: 90, height: 90, child: widget.icon),
-                const SizedBox(height: 20),
-                // Subtitle (labelMedium - 14px, gray600)
-                if (widget.subtitle != null) ...[
-                  Text(
-                    widget.subtitle!,
-                    style: Theme.of(context).textTheme.labelMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
-                ],
-                // Title (headlineMedium - 24px, bold)
-                Text(
-                  widget.title,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                // Description (bodySmall - 16px, gray600)
-                Text(
-                  widget.description,
-                  style: Theme.of(context).textTheme.bodySmall,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 32),
-                // CTA Buttons
-                _buildButtons(),
+          padding: EdgeInsets.fromLTRB(24, 24, 24, bottomPadding),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(width: 90, height: 90, child: widget.icon),
+              const SizedBox(height: 20),
+              if (widget.subtitle != null) ...[
+                widget.subtitle!,
+                const SizedBox(height: 12),
               ],
-            ),
+              Text(
+                widget.title,
+                style: Theme.of(context).textTheme.headlineMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                widget.description,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: TokenPrimitiveMode1.gray600,
+                  letterSpacing: -0.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+              _buildButtons(),
+            ],
           ),
         ),
       ),
@@ -245,52 +195,39 @@ class _InfoBottomModalState extends State<InfoBottomModal>
   }
 
   Widget _buildButtons() {
-    if (widget.secondaryButton == null) {
-      // Single primary button
-      return SizedBox(
-        width: double.infinity,
-        child: _buildButton(widget.primaryButton),
-      );
+    final primary = _buildButton(widget.primaryButton, isSecondary: false);
+    final secondary = widget.secondaryButton;
+
+    if (secondary == null) {
+      return SizedBox(width: double.infinity, child: primary);
     }
 
-    // Two buttons - layout based on buttonLayout
-    if (widget.buttonLayout == ModalButtonLayout.column) {
-      return Column(
-        children: [
-          SizedBox(
-            width: double.infinity,
-            child: _buildButton(widget.primaryButton),
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: _buildButton(widget.secondaryButton!, isSecondary: true),
-          ),
-        ],
-      );
-    }
+    final secondaryBtn = _buildButton(secondary, isSecondary: true);
 
-    // Row layout (default)
-    return Row(
-      children: [
-        Expanded(
-          child: _buildButton(widget.secondaryButton!, isSecondary: true),
-        ),
-        const SizedBox(width: 12),
-        Expanded(child: _buildButton(widget.primaryButton)),
-      ],
-    );
+    return widget.buttonLayout == ModalButtonLayout.column
+        ? Column(
+            children: [
+              SizedBox(width: double.infinity, child: primary),
+              const SizedBox(height: 12),
+              SizedBox(width: double.infinity, child: secondaryBtn),
+            ],
+          )
+        : Row(
+            children: [
+              Expanded(child: secondaryBtn),
+              const SizedBox(width: 12),
+              Expanded(child: primary),
+            ],
+          );
   }
 
-  Widget _buildButton(ModalButtonConfig config, {bool isSecondary = false}) {
+  Widget _buildButton(ModalButtonConfig config, {required bool isSecondary}) {
     return AppButton(
       text: config.text,
       style: isSecondary ? AppButtonStyle.secondary : AppButtonStyle.primary,
       onPressed: () {
         config.onPressed();
-        if (widget.isDismissible) {
-          _dismiss();
-        }
+        if (widget.isDismissible) _dismiss();
       },
     );
   }

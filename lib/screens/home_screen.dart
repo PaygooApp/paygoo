@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:paygoo/components/atoms/section_header.dart';
 import 'package:paygoo/components/atoms/wave_paper_clipper.dart';
 import 'package:paygoo/components/modals/custom_tip_modal.dart';
@@ -81,8 +82,17 @@ class _HomeScreenState extends State<HomeScreen> {
   void _showInfoModal() {
     InfoBottomModal.show(
       context,
-      icon: Image.asset('assets/Icon-Unsuccessful.png', width: 90, height: 90),
-      subtitle: 'Payment Failed',
+      icon: SvgPicture.asset('assets/Icon-Unsuccessful-flutter-shadow.svg'),
+      subtitle: Text(
+        'Payment Failed',
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.5,
+          color: TokenPrimitiveMode1.accenterror700,
+          decoration: TextDecoration.none,
+        ),
+      ),
       title: 'Unable to Process Payment',
       description:
           'There was an issue finalizing your payment. Please try again later.',
