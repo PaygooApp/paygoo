@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:paygoo/components/atoms/section_header.dart';
 import 'package:paygoo/components/atoms/wave_paper_clipper.dart';
 import 'package:paygoo/components/modals/custom_tip_modal.dart';
+import 'package:paygoo/components/modals/info_bottom_modal.dart';
 import 'package:paygoo/components/wrappers/bottom_summary_card.dart';
 import 'package:paygoo/components/wrappers/order_item_card.dart';
 import 'package:paygoo/components/wrappers/overscroll_container.dart';
@@ -74,6 +75,20 @@ class _HomeScreenState extends State<HomeScreen> {
         _selectedTipIndex = 3; // Select "Custom" option
       });
     }
+  }
+
+  /// Show the info bottom modal (for testing)
+  void _showInfoModal() {
+    InfoBottomModal.show(
+      context,
+      icon: Image.asset('assets/Icon-Unsuccessful.png', width: 90, height: 90),
+      subtitle: 'Payment Failed',
+      title: 'Unable to Process Payment',
+      description:
+          'There was an issue finalizing your payment. Please try again later.',
+      buttonLayout: ModalButtonLayout.column,
+      primaryButton: ModalButtonConfig(text: 'Try again', onPressed: () {}),
+    );
   }
 
   /// Order calculator instance - creates fresh instance on each access
@@ -278,6 +293,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           SectionHeader(title: "Payment Methods"),
                           SizedBox(height: 16),
                           const PaymentMethodsCard(),
+                          SizedBox(height: 24),
+                          // Test button for InfoBottomModal
+                          ElevatedButton(
+                            onPressed: _showInfoModal,
+                            child: Text('Test Info Modal'),
+                          ),
                           SizedBox(height: 30),
                         ],
                       ),
