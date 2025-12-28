@@ -9,15 +9,39 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final heroHeight = screenHeight * 0.55;
+    final bottomSafeArea = MediaQuery.of(context).padding.bottom;
+    final bottomPadding = bottomSafeArea > 0 ? bottomSafeArea : 24.0;
+
     const logoSize = 100.0;
     const logoOverlap = logoSize / 2;
+    const logoLabelOverlap = 12.0; // Half of 24px label height
+    const spacingAboveText = 28.0;
+    const spacingBelowText = 24.0;
+
+    // Calculate fixed heights for content section
+    // Text content approximate height (title + spacing + subtitle)
+    const textContentHeight = 100.0; // Approximate height for text content
+    // Buttons height (primary button + spacing + secondary button)
+    const buttonsHeight = 120.0; // Approximate height for buttons
+
+    // Calculate the total content height below the hero image
+    final contentHeight =
+        logoOverlap +
+        logoLabelOverlap +
+        spacingAboveText +
+        textContentHeight +
+        spacingBelowText +
+        buttonsHeight +
+        bottomPadding;
+
+    // Dynamically calculate hero height to fill remaining space
+    final heroHeight = screenHeight - contentHeight;
 
     return Scaffold(
       backgroundColor: TokenPrimitiveMode1.basewhite,
       body: Stack(
         children: [
-          // Hero image - 70% of screen
+          // Hero image - dynamically calculated height
           Positioned(
             top: 0,
             left: 0,
@@ -36,11 +60,11 @@ class WelcomeScreen extends StatelessWidget {
 
           // Content below the logo
           Positioned(
-            top: heroHeight + logoOverlap + 36,
+            top: heroHeight + logoOverlap + logoLabelOverlap,
             left: 0,
             right: 0,
             bottom: 0,
-            child: _buildContent(context),
+            child: _buildContent(context, spacingAboveText, spacingBelowText),
           ),
         ],
       ),
@@ -104,7 +128,11 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context) {
+  Widget _buildContent(
+    BuildContext context,
+    double spacingAboveText,
+    double spacingBelowText,
+  ) {
     final bottomSafeArea = MediaQuery.of(context).padding.bottom;
     // Match payment result screen: 24px spacing + safe area
     final bottomPadding = bottomSafeArea > 0 ? bottomSafeArea : 24.0;
@@ -112,8 +140,10 @@ class WelcomeScreen extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.fromLTRB(16, 0, 16, bottomPadding),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          // Spacing above text
+          SizedBox(height: spacingAboveText),
           // Text content
           Column(
             children: [
@@ -150,6 +180,10 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ],
           ),
+          // Spacing below text
+          SizedBox(height: spacingBelowText),
+          // Spacer to push buttons to the bottom
+          const Spacer(),
           // Buttons
           Column(
             children: [
