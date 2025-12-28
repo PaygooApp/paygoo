@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:paygoo/components/atoms/app_button.dart';
 import 'package:paygoo/models/payment_result.dart';
+import 'package:paygoo/screens/review_screen.dart';
 import 'package:paygoo/tokens/token_primitive_mode1.dart';
 
 /// Configuration for the payment result screen
@@ -312,7 +313,14 @@ class PaymentResultScreen extends StatelessWidget {
     return AppButton(
       text: 'Leave your review',
       onPressed: () {
-        // TODO: Handle leave review
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const ReviewScreen(
+              restaurantName: 'Raos Catering',
+              tableNumber: '8',
+            ),
+          ),
+        );
       },
       fullWidth: true,
     );

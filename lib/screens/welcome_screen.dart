@@ -151,7 +151,7 @@ class WelcomeScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w600,
                 letterSpacing: -0.5,
-                color: TokenPrimitiveMode1.gray900,
+                color: TokenPrimitiveMode1.gray900.withValues(alpha: 0.28),
               ),
             ),
             const SizedBox(width: 8),
