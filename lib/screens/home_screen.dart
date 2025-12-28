@@ -6,6 +6,7 @@ import 'package:paygoo/components/atoms/wave_paper_clipper.dart';
 import 'package:paygoo/components/modals/custom_tip_modal.dart';
 import 'package:paygoo/components/modals/info_bottom_modal.dart';
 import 'package:paygoo/components/wrappers/bottom_summary_card.dart';
+import 'package:paygoo/components/wrappers/loading_overlay.dart';
 import 'package:paygoo/components/wrappers/order_item_card.dart';
 import 'package:paygoo/components/wrappers/overscroll_container.dart';
 import 'package:paygoo/components/wrappers/payment_methods_card.dart';
@@ -326,6 +327,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             child: const Text('Test Payment Success'),
+                          ),
+                          const SizedBox(height: 12),
+                          ElevatedButton(
+                            onPressed: () async {
+                              LoadingOverlay.show(context);
+                              // Simulate loading for 3 seconds
+                              await Future.delayed(const Duration(seconds: 3));
+                              if (context.mounted) {
+                                LoadingOverlay.hide(context);
+                              }
+                            },
+                            child: const Text('Test Loading Overlay'),
                           ),
                           SizedBox(height: 30),
                         ],
