@@ -41,16 +41,22 @@ class BottomSummaryCard extends StatelessWidget {
     ), // -1 indicates custom
   ];
 
+  /// Returns the tip amount rounded to 2 decimal places to avoid floating point errors
   double get _tipAmount {
     if (selectedTipIndex == null) return 0.0;
     final option = tipOptions[selectedTipIndex!];
+    double rawTip;
     // Custom tip: use customTipPercentage
     if (option.value == -1) {
-      return selectedItemsTotal * (customTipPercentage ?? 0) / 100;
+      rawTip = selectedItemsTotal * (customTipPercentage ?? 0) / 100;
+    } else {
+      rawTip = selectedItemsTotal * (option.value as int) / 100;
     }
-    return selectedItemsTotal * (option.value as int) / 100;
+    // Round to 2 decimal places to avoid floating point precision issues
+    return (rawTip * 100).round() / 100;
   }
 
+  /// Total uses the already-rounded tip amount to ensure consistency
   double get _totalAmount => selectedItemsTotal + _tipAmount;
 
   String _formatCurrency(double amount) {
