@@ -15,6 +15,7 @@ import 'package:paygoo/mocks/order_items_mock.dart';
 import 'package:paygoo/mocks/payment_result_mock.dart';
 import 'package:paygoo/models/order_item.dart';
 import 'package:paygoo/screens/payment_result_screen.dart';
+import 'package:paygoo/screens/welcome_screen.dart';
 import 'package:paygoo/tokens/token_primitive_mode1.dart';
 import 'package:paygoo/utils/order_calculator.dart';
 
@@ -339,6 +340,15 @@ class _HomeScreenState extends State<HomeScreen> {
                               }
                             },
                             child: const Text('Test Loading Overlay'),
+                          ),
+                          const SizedBox(height: 12),
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const WelcomeScreen(),
+                              ),
+                            ),
+                            child: const Text('Test Welcome Screen'),
                           ),
                           SizedBox(height: 30),
                         ],
