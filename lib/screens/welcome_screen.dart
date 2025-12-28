@@ -8,7 +8,6 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
     final bottomSafeArea = MediaQuery.of(context).padding.bottom;
     final bottomPadding = bottomSafeArea > 0 ? bottomSafeArea : 24.0;
 
@@ -18,55 +17,163 @@ class WelcomeScreen extends StatelessWidget {
     const spacingAboveText = 28.0;
     const spacingBelowText = 24.0;
 
-    // Calculate fixed heights for content section
-    // Text content approximate height (title + spacing + subtitle)
-    const textContentHeight = 100.0; // Approximate height for text content
-    // Buttons height (primary button + spacing + secondary button)
-    const buttonsHeight = 120.0; // Approximate height for buttons
-
-    // Calculate the total content height below the hero image
-    final contentHeight =
-        logoOverlap +
-        logoLabelOverlap +
-        spacingAboveText +
-        textContentHeight +
-        spacingBelowText +
-        buttonsHeight +
-        bottomPadding;
-
-    // Dynamically calculate hero height to fill remaining space
-    final heroHeight = screenHeight - contentHeight;
-
     return Scaffold(
       backgroundColor: TokenPrimitiveMode1.basewhite,
-      body: Stack(
-        children: [
-          // Hero image - dynamically calculated height
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: heroHeight,
-            child: Image.asset('assets/hero_entry.png', fit: BoxFit.cover),
-          ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final screenHeight = constraints.maxHeight;
+          final screenWidth = constraints.maxWidth;
 
-          // Restaurant logo - overlapping at bottom of hero image
-          Positioned(
-            top: heroHeight - logoOverlap,
-            left: 0,
-            right: 0,
-            child: Center(child: _buildLogoWithLabel(context, logoSize)),
-          ),
+          // Build content to measure it
+          final contentWidget = _buildContentColumn(
+            context,
+            logoSize,
+            logoOverlap,
+            logoLabelOverlap,
+            spacingAboveText,
+            spacingBelowText,
+            bottomPadding,
+          );
 
-          // Content below the logo
-          Positioned(
-            top: heroHeight + logoOverlap + logoLabelOverlap,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _buildContent(context, spacingAboveText, spacingBelowText),
+          return _HeroWithContent(
+            screenHeight: screenHeight,
+            screenWidth: screenWidth,
+            logoOverlap: logoOverlap,
+            contentWidget: contentWidget,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildContentColumn(
+    BuildContext context,
+    double logoSize,
+    double logoOverlap,
+    double logoLabelOverlap,
+    double spacingAboveText,
+    double spacingBelowText,
+    double bottomPadding,
+  ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Logo with label
+        _buildLogoWithLabel(context, logoSize),
+        // Spacing above text
+        SizedBox(height: spacingAboveText),
+        // Text content
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              Text(
+                'Nothing To Pay Yet!',
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  color: TokenPrimitiveMode1.gray950,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text.rich(
+                TextSpan(
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: TokenPrimitiveMode1.gray600,
+                    letterSpacing: -0.5,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  children: [
+                    const TextSpan(
+                      text: 'Please order the food you would like to have by ',
+                    ),
+                    TextSpan(
+                      text: 'calling a waiter',
+                      style: TextStyle(
+                        color: TokenPrimitiveMode1.gray900,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const TextSpan(text: '.'),
+                  ],
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-        ],
+        ),
+        // Spacing below text (exactly 24px)
+        SizedBox(height: spacingBelowText),
+        // Buttons
+        Padding(
+          padding: EdgeInsets.fromLTRB(16, 0, 16, bottomPadding),
+          child: Column(
+            children: [
+              AppButton(
+                text: 'Order a waiter',
+                onPressed: () {
+                  // TODO: Handle order waiter action
+                },
+                fullWidth: true,
+              ),
+              const SizedBox(height: 12),
+              _buildSecondaryButton(context),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSecondaryButton(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          // TODO: Handle see menu action
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: TokenPrimitiveMode1.gray100,
+          foregroundColor: TokenPrimitiveMode1.gray900,
+          elevation: 0,
+          shadowColor: Colors.transparent,
+          side: BorderSide.none,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(100),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'See menu',
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.5,
+                color: TokenPrimitiveMode1.gray900,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: TokenPrimitiveMode1.gray900,
+                borderRadius: BorderRadius.circular(
+                  TokenPrimitiveMode1.borderRadiusround.toDouble(),
+                ),
+              ),
+              child: Text(
+                'Coming soon',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: TokenPrimitiveMode1.basewhite,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -127,133 +234,123 @@ class WelcomeScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildContent(
-    BuildContext context,
-    double spacingAboveText,
-    double spacingBelowText,
-  ) {
-    final bottomSafeArea = MediaQuery.of(context).padding.bottom;
-    // Match payment result screen: 24px spacing + safe area
-    final bottomPadding = bottomSafeArea > 0 ? bottomSafeArea : 24.0;
+/// Widget that measures content and renders hero image with dynamic height
+class _HeroWithContent extends StatelessWidget {
+  final double screenHeight;
+  final double screenWidth;
+  final double logoOverlap;
+  final Widget contentWidget;
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(16, 0, 16, bottomPadding),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          // Spacing above text
-          SizedBox(height: spacingAboveText),
-          // Text content
-          Column(
-            children: [
-              Text(
-                'Nothing To Pay Yet!',
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  color: TokenPrimitiveMode1.gray950,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              Text.rich(
-                TextSpan(
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: TokenPrimitiveMode1.gray600,
-                    letterSpacing: -0.5,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  children: [
-                    const TextSpan(
-                      text: 'Please order the food you would like to have by ',
-                    ),
-                    TextSpan(
-                      text: 'calling a waiter',
-                      style: TextStyle(
-                        color: TokenPrimitiveMode1.gray900,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const TextSpan(text: '.'),
-                  ],
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+  const _HeroWithContent({
+    required this.screenHeight,
+    required this.screenWidth,
+    required this.logoOverlap,
+    required this.contentWidget,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // Content positioned at bottom - this will determine hero height
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: _MeasuredContent(
+            logoOverlap: logoOverlap,
+            screenHeight: screenHeight,
+            contentWidget: contentWidget,
           ),
-          // Spacing below text
-          SizedBox(height: spacingBelowText),
-          // Spacer to push buttons to the bottom
-          const Spacer(),
-          // Buttons
-          Column(
-            children: [
-              AppButton(
-                text: 'Order a waiter',
-                onPressed: () {
-                  // TODO: Handle order waiter action
-                },
-                fullWidth: true,
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Handle see menu action
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: TokenPrimitiveMode1.gray100,
-                    foregroundColor: TokenPrimitiveMode1.gray900,
-                    elevation: 0,
-                    shadowColor: Colors.transparent,
-                    side: BorderSide.none,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'See menu',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.5,
-                          color: TokenPrimitiveMode1.gray900,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: TokenPrimitiveMode1.gray900,
-                          borderRadius: BorderRadius.circular(
-                            TokenPrimitiveMode1.borderRadiusround.toDouble(),
-                          ),
-                        ),
-                        child: Text(
-                          'Coming soon',
-                          style: Theme.of(context).textTheme.labelLarge
-                              ?.copyWith(
-                                color: TokenPrimitiveMode1.basewhite,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+        ),
+      ],
     );
+  }
+}
+
+/// Widget that measures its content and renders the hero image behind it
+class _MeasuredContent extends StatefulWidget {
+  final double logoOverlap;
+  final double screenHeight;
+  final Widget contentWidget;
+
+  const _MeasuredContent({
+    required this.logoOverlap,
+    required this.screenHeight,
+    required this.contentWidget,
+  });
+
+  @override
+  State<_MeasuredContent> createState() => _MeasuredContentState();
+}
+
+class _MeasuredContentState extends State<_MeasuredContent> {
+  double? _contentHeight;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // Hero image positioned above the content
+        if (_contentHeight != null)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: _contentHeight! - widget.logoOverlap,
+            child: SizedBox(
+              height:
+                  widget.screenHeight - _contentHeight! + widget.logoOverlap,
+              child: Image.asset('assets/hero_entry.png', fit: BoxFit.cover),
+            ),
+          ),
+        // Measure and display content
+        _MeasureSize(
+          onChange: (size) {
+            if (_contentHeight != size.height) {
+              setState(() {
+                _contentHeight = size.height;
+              });
+            }
+          },
+          child: widget.contentWidget,
+        ),
+      ],
+    );
+  }
+}
+
+/// Widget that measures its child and reports the size
+class _MeasureSize extends StatefulWidget {
+  final Widget child;
+  final void Function(Size size) onChange;
+
+  const _MeasureSize({required this.child, required this.onChange});
+
+  @override
+  State<_MeasureSize> createState() => _MeasureSizeState();
+}
+
+class _MeasureSizeState extends State<_MeasureSize> {
+  final _key = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
+  }
+
+  void _measure() {
+    final renderBox = _key.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      widget.onChange(renderBox.size);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(key: _key, child: widget.child);
   }
 }
