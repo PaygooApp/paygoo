@@ -58,7 +58,7 @@ class PaymentResultScreen extends StatelessWidget {
   const PaymentResultScreen({
     super.key,
     required this.config,
-    this.headerImageAsset = 'assets/header_payment.png',
+    this.headerImageAsset = 'assets/images/cover/header_payment.png',
     this.onClose,
     this.additionalContent,
     this.iconSize = 90,

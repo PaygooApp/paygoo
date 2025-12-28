@@ -21,7 +21,7 @@ class StickyVenueHeader extends StatefulWidget {
     this.enableStickyHeader = true,
     this.coverHeight = 200.0,
     this.cardOverlap = 40.0,
-    this.coverImage = 'assets/background_app.png',
+    this.coverImage = 'assets/images/cover/background_app.png',
   });
 
   /// Scroll controller to track scroll position for sticky behavior

@@ -86,7 +86,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void _showInfoModal() {
     InfoBottomModal.show(
       context,
-      icon: SvgPicture.asset('assets/Icon-Unsuccessful-flutter-shadow.svg'),
+      icon: SvgPicture.asset(
+        'assets/images/icons/Icon-Unsuccessful-flutter-shadow.svg',
+      ),
       subtitle: Text(
         'Payment Failed',
         style: TextStyle(
@@ -319,7 +321,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               MaterialPageRoute(
                                 builder: (_) => PaymentResultScreen(
                                   config: PaymentResultConfig(
-                                    iconAsset: 'assets/Icon-Successful.svg',
+                                    iconAsset:
+                                        'assets/images/icons/Icon-Successful.svg',
                                     title: 'Payment Successful',
                                     paymentResult:
                                         PaymentResultMock.successfulPayment,

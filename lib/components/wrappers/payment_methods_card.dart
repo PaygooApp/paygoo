@@ -141,7 +141,7 @@ class _PaymentMethodsCardState extends State<PaymentMethodsCard> {
               title: "Apple Pay",
               trailing: _buildPaymentIconBox(
                 child: SvgPicture.asset(
-                  'assets/apple_pay.svg',
+                  'assets/images/payment_methods/apple_pay.svg',
                   height: 13,
                   width: 29,
                 ),
@@ -155,7 +155,7 @@ class _PaymentMethodsCardState extends State<PaymentMethodsCard> {
               title: "Google Pay",
               trailing: _buildPaymentIconBox(
                 child: SvgPicture.asset(
-                  'assets/g_pay.svg',
+                  'assets/images/payment_methods/g_pay.svg',
                   height: 13,
                   width: 29,
                 ),
@@ -170,11 +170,17 @@ class _PaymentMethodsCardState extends State<PaymentMethodsCard> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _buildPaymentIconBox(
-                  child: SvgPicture.asset('assets/visa.svg', height: 13),
+                  child: SvgPicture.asset(
+                    'assets/images/payment_methods/visa.svg',
+                    height: 13,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 _buildPaymentIconBox(
-                  child: SvgPicture.asset('assets/mastercard.svg', height: 13),
+                  child: SvgPicture.asset(
+                    'assets/images/payment_methods/mastercard.svg',
+                    height: 13,
+                  ),
                 ),
               ],
             ),
@@ -185,4 +191,3 @@ class _PaymentMethodsCardState extends State<PaymentMethodsCard> {
     );
   }
 }
-

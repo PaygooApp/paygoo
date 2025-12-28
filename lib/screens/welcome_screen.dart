@@ -201,7 +201,10 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ),
             child: ClipOval(
-              child: Image.asset('assets/Logo1.png', fit: BoxFit.cover),
+              child: Image.asset(
+                'assets/images/logos/Logo1.png',
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           // Table label - overlapping 50% at bottom
@@ -303,7 +306,10 @@ class _MeasuredContentState extends State<_MeasuredContent> {
             child: SizedBox(
               height:
                   widget.screenHeight - _contentHeight! + widget.logoOverlap,
-              child: Image.asset('assets/hero_entry.png', fit: BoxFit.cover),
+              child: Image.asset(
+                'assets/images/cover/hero_entry.png',
+                fit: BoxFit.cover,
+              ),
             ),
           ),
         // Measure and display content

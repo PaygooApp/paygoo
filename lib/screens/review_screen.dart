@@ -97,7 +97,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           height: coverHeight,
           width: double.infinity,
           child: Image.asset(
-            'assets/review_image.png',
+            'assets/images/cover/review_image.png',
             fit: BoxFit.cover,
             alignment: Alignment.topCenter,
           ),
@@ -224,7 +224,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
               color: TokenPrimitiveMode1.gray100,
             ),
             clipBehavior: Clip.antiAlias,
-            child: Image.asset('assets/Logo1.png', fit: BoxFit.cover),
+            child: Image.asset(
+              'assets/images/logos/Logo1.png',
+              fit: BoxFit.cover,
+            ),
           ),
           const SizedBox(width: 12),
           // Restaurant name
@@ -403,7 +406,9 @@ class _AnimatedStarState extends State<_AnimatedStar>
             return Transform.scale(scale: _scaleAnimation.value, child: child);
           },
           child: SvgPicture.asset(
-            widget.isSelected ? 'assets/star_true.svg' : 'assets/star.svg',
+            widget.isSelected
+                ? 'assets/images/icons/star_true.svg'
+                : 'assets/images/icons/star.svg',
             width: 48,
             height: 48,
           ),

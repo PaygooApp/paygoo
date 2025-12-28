@@ -60,7 +60,11 @@ class AppCheckbox extends StatelessWidget {
               scale: value ? 1.0 : 0.0,
               duration: _animationDuration,
               curve: Curves.fastLinearToSlowEaseIn,
-              child: Image.asset('assets/check.png', width: 16, height: 16),
+              child: Image.asset(
+                'assets/images/icons/check.png',
+                width: 16,
+                height: 16,
+              ),
             ),
           ),
           if (label != null) ...[
