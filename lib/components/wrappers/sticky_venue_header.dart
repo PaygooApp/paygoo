@@ -2,6 +2,7 @@ import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 import 'package:paygoo/components/wrappers/venu_table_card.dart';
+import 'package:paygoo/models/currency.dart';
 import 'package:paygoo/models/venue.dart';
 
 /// Builder callback that receives the cover section and optional sticky overlay.
@@ -18,21 +19,21 @@ class StickyVenueHeader extends StatefulWidget {
     required this.scrollController,
     required this.builder,
     required this.venue,
-    required this.totalAmount,
     this.enableStickyHeader = true,
     this.coverHeight = 200.0,
     this.cardOverlap = 40.0,
     this.coverImage = 'assets/images/cover/background_app.png',
+    this.currency = Currency.usd,
   });
 
   final ScrollController scrollController;
   final StickyVenueHeaderBuilder builder;
   final Venue venue;
-  final String totalAmount;
   final bool enableStickyHeader;
   final double coverHeight;
   final double cardOverlap;
   final String coverImage;
+  final Currency currency;
 
   double get spacingBelowCover => cardOverlap + 24;
 
@@ -104,7 +105,7 @@ class _StickyVenueHeaderState extends State<StickyVenueHeader>
       venueLogo: widget.venue.logoUrl,
       venueName: widget.venue.name,
       tableNumber: widget.venue.tableNumber,
-      totalAmount: widget.totalAmount,
+      totalAmount: widget.currency.format(widget.venue.tableBillTotal),
     );
   }
 

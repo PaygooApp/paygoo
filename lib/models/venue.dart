@@ -3,12 +3,14 @@ class Venue {
   final String name;
   final String logoUrl;
   final String tableNumber;
+  final double tableBillTotal;
 
   const Venue({
     required this.id,
     required this.name,
     required this.logoUrl,
     required this.tableNumber,
+    required this.tableBillTotal,
   });
 
   factory Venue.fromJson(Map<String, dynamic> json) {
@@ -17,6 +19,7 @@ class Venue {
       name: json['name'] as String,
       logoUrl: json['logoUrl'] as String,
       tableNumber: json['tableNumber'] as String,
+      tableBillTotal: (json['tableBillTotal'] as num).toDouble(),
     );
   }
 
@@ -26,7 +29,7 @@ class Venue {
       'name': name,
       'logoUrl': logoUrl,
       'tableNumber': tableNumber,
+      'tableBillTotal': tableBillTotal,
     };
   }
 }
-

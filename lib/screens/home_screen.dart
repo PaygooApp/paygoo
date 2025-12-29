@@ -16,7 +16,6 @@ import 'package:paygoo/mocks/info_modal_mock.dart';
 import 'package:paygoo/mocks/order_items_mock.dart';
 import 'package:paygoo/mocks/payment_result_mock.dart';
 import 'package:paygoo/mocks/venue_mock.dart';
-import 'package:paygoo/models/currency.dart';
 import 'package:paygoo/models/order_item.dart';
 import 'package:paygoo/screens/payment_result_screen.dart';
 import 'package:paygoo/screens/welcome_screen.dart';
@@ -198,7 +197,6 @@ class _HomeScreenState extends State<HomeScreen> {
       scrollController: _scrollController,
       enableStickyHeader: widget.enableStickyVenueHeader,
       venue: VenueMock.tavernaRacilor,
-      totalAmount: Currency.usd.format(_calculator.itemTotal),
       builder: (context, coverSection, stickyOverlay) {
         return Scaffold(
           body: Stack(

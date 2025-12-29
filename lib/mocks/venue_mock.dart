@@ -8,6 +8,7 @@ class VenueMock {
     name: 'Taverna Racilor',
     logoUrl: 'assets/images/logos/Logo1.png',
     tableNumber: 'Table: 8',
+    tableBillTotal: 263.17,
   );
 
   static const Venue restaurantExemplu = Venue(
@@ -15,11 +16,8 @@ class VenueMock {
     name: 'Restaurant Exemplu',
     logoUrl: 'assets/images/logos/Logo1.png',
     tableNumber: 'Table: 12',
+    tableBillTotal: 185.50,
   );
 
-  static const List<Venue> allVenues = [
-    tavernaRacilor,
-    restaurantExemplu,
-  ];
+  static const List<Venue> allVenues = [tavernaRacilor, restaurantExemplu];
 }
-
