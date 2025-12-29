@@ -289,36 +289,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               // Sticky header with glass effect
               if (stickyOverlay != null) stickyOverlay,
-              // Bottom summary card - slides in from bottom when items selected
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: AnimatedSlide(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  offset: _calculator.hasAnySelected
-                      ? Offset.zero
-                      : const Offset(0, 1), // Slide down when hidden
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 300),
-                    opacity: _calculator.hasAnySelected ? 1.0 : 0.0,
-                    child: BottomSummaryCard(
-                      selectedItemsTotal: _calculator.itemTotal,
-                      selectedTipIndex: _selectedTipIndex,
-                      customTipPercentage: _customTipPercentage,
-                      onTipChanged: (index) {
-                        setState(() {
-                          _selectedTipIndex = index;
-                        });
-                      },
-                      onCustomTipTapped: () => _showCustomTipModal(),
-                      onSlideCompleted: () {
-                        // TODO: Handle payment
-                      },
-                    ),
-                  ),
-                ),
+              BottomSummaryCard(
+                isVisible: _calculator.hasAnySelected,
+                selectedItemsTotal: _calculator.itemTotal,
+                selectedTipIndex: _selectedTipIndex,
+                customTipPercentage: _customTipPercentage,
+                onTipChanged: (index) {
+                  setState(() {
+                    _selectedTipIndex = index;
+                  });
+                },
+                onCustomTipTapped: () => _showCustomTipModal(),
+                onSlideCompleted: () {
+                  // TODO: Handle payment
+                },
               ),
             ],
           ),

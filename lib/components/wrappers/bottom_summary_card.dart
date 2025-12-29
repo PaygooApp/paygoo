@@ -8,6 +8,7 @@ import 'package:paygoo/tokens/token_primitive_mode1.dart';
 import 'package:paygoo/utils/constants/tip_constants.dart';
 
 /// A fixed bottom card that displays order summary information.
+/// Includes built-in slide and fade animations based on visibility.
 class BottomSummaryCard extends StatelessWidget {
   final double selectedItemsTotal;
   final String initialSlideText;
@@ -18,6 +19,9 @@ class BottomSummaryCard extends StatelessWidget {
   final double? customTipPercentage;
   final VoidCallback? onCustomTipTapped;
   final Currency currency;
+  final bool isVisible;
+  final Duration animationDuration;
+  final Curve animationCurve;
 
   const BottomSummaryCard({
     super.key,
@@ -30,6 +34,9 @@ class BottomSummaryCard extends StatelessWidget {
     this.customTipPercentage,
     this.onCustomTipTapped,
     this.currency = Currency.usd,
+    this.isVisible = true,
+    this.animationDuration = const Duration(milliseconds: 300),
+    this.animationCurve = Curves.easeInOut,
   });
 
   double get _tipAmount {
@@ -50,6 +57,24 @@ class BottomSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: AnimatedSlide(
+        duration: animationDuration,
+        curve: animationCurve,
+        offset: isVisible ? Offset.zero : const Offset(0, 1),
+        child: AnimatedOpacity(
+          duration: animationDuration,
+          opacity: isVisible ? 1.0 : 0.0,
+          child: _buildCard(context),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCard(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: TokenPrimitiveMode1.basewhite,
