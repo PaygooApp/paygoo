@@ -1,6 +1,7 @@
 import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
+import 'package:paygoo/components/atoms/blurhash_image.dart';
 import 'package:paygoo/components/wrappers/venu_table_card.dart';
 import 'package:paygoo/models/currency.dart';
 import 'package:paygoo/models/venue.dart';
@@ -23,6 +24,7 @@ class StickyVenueHeader extends StatefulWidget {
     this.coverHeight = 200.0,
     this.cardOverlap = 40.0,
     this.coverImage = 'assets/images/cover/background_app.png',
+    this.coverImageBlurHash,
     this.currency = Currency.usd,
   });
 
@@ -33,6 +35,11 @@ class StickyVenueHeader extends StatefulWidget {
   final double coverHeight;
   final double cardOverlap;
   final String coverImage;
+
+  /// BlurHash string for the cover image placeholder.
+  /// If null, the image will load without a blur placeholder.
+  final String? coverImageBlurHash;
+
   final Currency currency;
 
   double get spacingBelowCover => cardOverlap + 24;
@@ -122,17 +129,28 @@ class _StickyVenueHeaderState extends State<StickyVenueHeader>
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        // Cover image
-        Container(
-          height: widget.coverHeight,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(widget.coverImage),
-              fit: BoxFit.cover,
+        // Cover image with optional BlurHash placeholder
+        if (widget.coverImageBlurHash != null)
+          BlurHashImage(
+            blurHash: widget.coverImageBlurHash!,
+            imagePath: widget.coverImage,
+            height: widget.coverHeight,
+            width: double.infinity,
+            fit: BoxFit.cover,
+            // Slower fade for demo - can reduce to 300ms for production
+            duration: const Duration(milliseconds: 1500),
+          )
+        else
+          Container(
+            height: widget.coverHeight,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(widget.coverImage),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ),
         // VenueTableCard positioned to overlap bottom of cover
         Positioned(
           left: 16,

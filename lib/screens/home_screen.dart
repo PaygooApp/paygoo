@@ -197,6 +197,8 @@ class _HomeScreenState extends State<HomeScreen> {
       scrollController: _scrollController,
       enableStickyHeader: widget.enableStickyVenueHeader,
       venue: VenueMock.tavernaRacilor,
+      // BlurHash generated from background_app.png at https://blurha.sh
+      coverImageBlurHash: 'LiMj{sRiM{V?ysf5t7ofpdogRkW=',
       builder: (context, coverSection, stickyOverlay) {
         return Scaffold(
           body: Stack(
@@ -234,51 +236,51 @@ class _HomeScreenState extends State<HomeScreen> {
                           SectionHeader(title: "Payment Methods"),
                           SizedBox(height: 16),
                           const PaymentMethodsCard(),
-                          SizedBox(height: 24),
-                          // Test buttons
-                          ElevatedButton(
-                            onPressed: _showInfoModal,
-                            child: Text('Test Info Modal'),
-                          ),
-                          const SizedBox(height: 12),
-                          ElevatedButton(
-                            onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => PaymentResultScreen(
-                                  config: PaymentResultConfig(
-                                    iconAsset:
-                                        'assets/images/icons/Icon-Successful.svg',
-                                    title: 'Payment Successful',
-                                    paymentResult:
-                                        PaymentResultMock.successfulPayment,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            child: const Text('Test Payment Success'),
-                          ),
-                          const SizedBox(height: 12),
-                          ElevatedButton(
-                            onPressed: () async {
-                              LoadingOverlay.show(context);
-                              // Simulate loading for 3 seconds
-                              await Future.delayed(const Duration(seconds: 3));
-                              if (context.mounted) {
-                                LoadingOverlay.hide(context);
-                              }
-                            },
-                            child: const Text('Test Loading Overlay'),
-                          ),
-                          const SizedBox(height: 12),
-                          ElevatedButton(
-                            onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const WelcomeScreen(),
-                              ),
-                            ),
-                            child: const Text('Test Welcome Screen'),
-                          ),
-                          SizedBox(height: 30),
+                          // SizedBox(height: 24),
+                          // // Test buttons
+                          // ElevatedButton(
+                          //   onPressed: _showInfoModal,
+                          //   child: Text('Test Info Modal'),
+                          // ),
+                          // const SizedBox(height: 12),
+                          // ElevatedButton(
+                          //   onPressed: () => Navigator.of(context).push(
+                          //     MaterialPageRoute(
+                          //       builder: (_) => PaymentResultScreen(
+                          //         config: PaymentResultConfig(
+                          //           iconAsset:
+                          //               'assets/images/icons/Icon-Successful.svg',
+                          //           title: 'Payment Successful',
+                          //           paymentResult:
+                          //               PaymentResultMock.successfulPayment,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                          //   child: const Text('Test Payment Success'),
+                          // ),
+                          // const SizedBox(height: 12),
+                          // ElevatedButton(
+                          //   onPressed: () async {
+                          //     LoadingOverlay.show(context);
+                          //     // Simulate loading for 3 seconds
+                          //     await Future.delayed(const Duration(seconds: 3));
+                          //     if (context.mounted) {
+                          //       LoadingOverlay.hide(context);
+                          //     }
+                          //   },
+                          //   child: const Text('Test Loading Overlay'),
+                          // ),
+                          // const SizedBox(height: 12),
+                          // ElevatedButton(
+                          //   onPressed: () => Navigator.of(context).push(
+                          //     MaterialPageRoute(
+                          //       builder: (_) => const WelcomeScreen(),
+                          //     ),
+                          //   ),
+                          //   child: const Text('Test Welcome Screen'),
+                          // ),
+                          // SizedBox(height: 30),
                         ],
                       ),
                     ),
