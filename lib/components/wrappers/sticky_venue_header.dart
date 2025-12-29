@@ -2,6 +2,7 @@ import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 import 'package:paygoo/components/wrappers/venu_table_card.dart';
+import 'package:paygoo/models/venue.dart';
 
 /// Builder callback that receives the cover section and optional sticky overlay.
 typedef StickyVenueHeaderBuilder =
@@ -11,38 +12,28 @@ typedef StickyVenueHeaderBuilder =
       Widget? stickyOverlay,
     );
 
-/// A widget that displays a cover image with an overlapping VenueTableCard,
-/// and a sticky header with glass effect when scrolling.
 class StickyVenueHeader extends StatefulWidget {
   const StickyVenueHeader({
     super.key,
     required this.scrollController,
     required this.builder,
+    required this.venue,
+    required this.totalAmount,
     this.enableStickyHeader = true,
     this.coverHeight = 200.0,
     this.cardOverlap = 40.0,
     this.coverImage = 'assets/images/cover/background_app.png',
   });
 
-  /// Scroll controller to track scroll position for sticky behavior
   final ScrollController scrollController;
-
-  /// Builder that receives cover section and sticky overlay to compose UI
   final StickyVenueHeaderBuilder builder;
-
-  /// Whether to enable the sticky header behavior
+  final Venue venue;
+  final String totalAmount;
   final bool enableStickyHeader;
-
-  /// Height of the cover image
   final double coverHeight;
-
-  /// How much the venue card overlaps the cover image
   final double cardOverlap;
-
-  /// Path to the cover image asset
   final String coverImage;
 
-  /// Returns the spacing needed below the cover section
   double get spacingBelowCover => cardOverlap + 24;
 
   @override
@@ -110,10 +101,10 @@ class _StickyVenueHeaderState extends State<StickyVenueHeader>
 
   Widget _buildVenueTableCard() {
     return VenueTableCard(
-      venueLogo: "venueLogo",
-      venueName: "Taverna Racilor",
-      tableNumber: "Table:8",
-      totalAmount: "\$263.17",
+      venueLogo: widget.venue.logoUrl,
+      venueName: widget.venue.name,
+      tableNumber: widget.venue.tableNumber,
+      totalAmount: widget.totalAmount,
     );
   }
 

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:paygoo/components/atoms/section_header.dart';
-import 'package:paygoo/components/atoms/wave_paper_clipper.dart';
+import 'package:paygoo/components/compose/order_items_cards_layout.dart';
+import 'package:paygoo/components/compose/order_items_grouped_layout.dart';
 import 'package:paygoo/components/modals/custom_tip_modal.dart';
 import 'package:paygoo/components/modals/info_bottom_modal.dart';
 import 'package:paygoo/components/wrappers/bottom_summary_card.dart';
@@ -11,12 +12,14 @@ import 'package:paygoo/components/wrappers/order_item_card.dart';
 import 'package:paygoo/components/wrappers/overscroll_container.dart';
 import 'package:paygoo/components/wrappers/payment_methods_card.dart';
 import 'package:paygoo/components/wrappers/sticky_venue_header.dart';
+import 'package:paygoo/mocks/info_modal_mock.dart';
 import 'package:paygoo/mocks/order_items_mock.dart';
 import 'package:paygoo/mocks/payment_result_mock.dart';
+import 'package:paygoo/mocks/venue_mock.dart';
+import 'package:paygoo/models/currency.dart';
 import 'package:paygoo/models/order_item.dart';
 import 'package:paygoo/screens/payment_result_screen.dart';
 import 'package:paygoo/screens/welcome_screen.dart';
-import 'package:paygoo/tokens/token_primitive_mode1.dart';
 import 'package:paygoo/utils/order_calculator.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -84,24 +87,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Show the info bottom modal (for testing)
   void _showInfoModal() {
+    const config = InfoModalMock.paymentFailed;
     InfoBottomModal.show(
       context,
-      icon: SvgPicture.asset(
-        'assets/images/icons/Icon-Unsuccessful-flutter-shadow.svg',
-      ),
+      icon: SvgPicture.asset(config.iconAsset),
       subtitle: Text(
-        'Payment Failed',
+        config.subtitleText ?? '',
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w600,
           letterSpacing: -0.5,
-          color: TokenPrimitiveMode1.accenterror700,
+          color: config.subtitleColor,
           decoration: TextDecoration.none,
         ),
       ),
-      title: 'Unable to Process Payment',
-      description:
-          'There was an issue finalizing your payment. Please try again later.',
+      title: config.title,
+      description: config.description,
       buttonLayout: ModalButtonLayout.column,
       primaryButton: ModalButtonConfig(text: 'Try again', onPressed: () {}),
     );
@@ -114,7 +115,6 @@ class _HomeScreenState extends State<HomeScreen> {
     selections: _selections,
   );
 
-  /// Select all items with their maximum available quantity
   void _selectAll() {
     // Update UI immediately
     setState(() {
@@ -157,113 +157,38 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  /// Builds the grouped layout with wave paper container
+  void _handleSelectionChanged(String itemId, bool isSelected) {
+    setState(() {
+      final current = _selections[itemId]!;
+      _selections[itemId] = current.copyWith(
+        isSelected: isSelected,
+        selectedQuantity: isSelected ? current.selectedQuantity : 1,
+      );
+    });
+  }
+
+  void _handleQuantityChanged(String itemId, int quantity) {
+    setState(() {
+      final current = _selections[itemId]!;
+      _selections[itemId] = current.copyWith(selectedQuantity: quantity);
+    });
+  }
+
   Widget _buildGroupedLayout(BuildContext context) {
-    return WavePaperContainer(
-      color: Theme.of(context).colorScheme.surface,
-      waveHeight: 10,
-      waveWidth: 20,
-      topRadius: 16,
-      //TODO: explore this version
-      // borderColor: TokenPrimitiveMode1.gray200,
-      // borderWidth: 1,
-      boxShadow: [
-        BoxShadow(
-          color: Color(0x0A000000),
-          blurRadius: 6,
-          offset: Offset(0, -2),
-          spreadRadius: 0,
-        ),
-        BoxShadow(
-          color: Color(0x10000000),
-          blurRadius: 8,
-          offset: Offset(0, 3),
-          spreadRadius: 0,
-        ),
-      ],
-      child: Column(
-        children: [
-          ...OrderItemsMock.items.asMap().entries.map((entry) {
-            final index = entry.key;
-            final item = entry.value;
-            final selection = _selections[item.id]!;
-            final isLast = index == OrderItemsMock.items.length - 1;
-            return Column(
-              children: [
-                OrderItemCard(
-                  itemName: item.name,
-                  price: item.price,
-                  isSelected: selection.isSelected,
-                  onSelectedChanged: (value) => setState(() {
-                    final current = _selections[item.id]!;
-                    _selections[item.id] = current.copyWith(
-                      isSelected: value,
-                      selectedQuantity: value ? current.selectedQuantity : 1,
-                    );
-                  }),
-                  availableQuantity: item.availableQuantity,
-                  selectedQuantity: selection.selectedQuantity,
-                  onQuantityChanged: (value) => setState(() {
-                    final current = _selections[item.id]!;
-                    _selections[item.id] = current.copyWith(
-                      selectedQuantity: value,
-                    );
-                  }),
-                  showSelectedBorder: false,
-                  enableTapAnimation: true,
-                  layoutStyle: OrderItemLayoutStyle.grouped,
-                ),
-                if (!isLast)
-                  Divider(
-                    height: 1,
-                    thickness: 1,
-                    color: TokenPrimitiveMode1.gray200,
-                    indent: 0,
-                    endIndent: 0,
-                  ),
-                if (isLast) SizedBox(height: 14),
-              ],
-            );
-          }),
-        ],
-      ),
+    return OrderItemsGroupedLayout(
+      items: OrderItemsMock.items,
+      selections: _selections,
+      onSelectedChanged: _handleSelectionChanged,
+      onQuantityChanged: _handleQuantityChanged,
     );
   }
 
-  /// Builds the cards layout with individual cards
   Widget _buildCardsLayout(BuildContext context) {
-    return Column(
-      children: [
-        ...OrderItemsMock.items.map((item) {
-          final selection = _selections[item.id]!;
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 6),
-            child: OrderItemCard(
-              itemName: item.name,
-              price: item.price,
-              isSelected: selection.isSelected,
-              onSelectedChanged: (value) => setState(() {
-                final current = _selections[item.id]!;
-                _selections[item.id] = current.copyWith(
-                  isSelected: value,
-                  selectedQuantity: value ? current.selectedQuantity : 1,
-                );
-              }),
-              availableQuantity: item.availableQuantity,
-              selectedQuantity: selection.selectedQuantity,
-              onQuantityChanged: (value) => setState(() {
-                final current = _selections[item.id]!;
-                _selections[item.id] = current.copyWith(
-                  selectedQuantity: value,
-                );
-              }),
-              showSelectedBorder: false,
-              enableTapAnimation: true,
-              layoutStyle: OrderItemLayoutStyle.cards,
-            ),
-          );
-        }),
-      ],
+    return OrderItemsCardsLayout(
+      items: OrderItemsMock.items,
+      selections: _selections,
+      onSelectedChanged: _handleSelectionChanged,
+      onQuantityChanged: _handleQuantityChanged,
     );
   }
 
@@ -272,6 +197,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return StickyVenueHeader(
       scrollController: _scrollController,
       enableStickyHeader: widget.enableStickyVenueHeader,
+      venue: VenueMock.tavernaRacilor,
+      totalAmount: Currency.usd.format(_calculator.itemTotal),
       builder: (context, coverSection, stickyOverlay) {
         return Scaffold(
           body: Stack(
@@ -378,7 +305,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     opacity: _calculator.hasAnySelected ? 1.0 : 0.0,
                     child: BottomSummaryCard(
                       selectedItemsTotal: _calculator.itemTotal,
-                      isEnabled: _calculator.hasAnySelected,
                       selectedTipIndex: _selectedTipIndex,
                       customTipPercentage: _customTipPercentage,
                       onTipChanged: (index) {

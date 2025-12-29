@@ -54,10 +54,7 @@ class VenueTableCard extends StatelessWidget {
                     color: TokenPrimitiveMode1.gray100,
                   ),
                   clipBehavior: Clip.antiAlias,
-                  child: Image.asset(
-                    'assets/images/logos/Logo1.png',
-                    fit: BoxFit.cover,
-                  ),
+                  child: Image.asset(venueLogo, fit: BoxFit.cover),
                 ),
                 SizedBox(width: TokenPrimitiveMode1.scale300.toDouble()),
                 Flexible(
