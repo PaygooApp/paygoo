@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:paygoo/components/atoms/section_header.dart';
 import 'package:paygoo/components/compose/order_items_cards_layout.dart';
 import 'package:paygoo/components/compose/order_items_grouped_layout.dart';
 import 'package:paygoo/components/modals/custom_tip_modal.dart';
-import 'package:paygoo/components/modals/info_bottom_modal.dart';
 import 'package:paygoo/components/wrappers/bottom_summary_card.dart';
 import 'package:paygoo/components/wrappers/order_item_card.dart';
 import 'package:paygoo/components/wrappers/overscroll_container.dart';
 import 'package:paygoo/components/wrappers/payment_methods_card.dart';
 import 'package:paygoo/components/wrappers/sticky_venue_header.dart';
-import 'package:paygoo/mocks/info_modal_mock.dart';
 import 'package:paygoo/mocks/order_items_mock.dart';
 import 'package:paygoo/mocks/venue_mock.dart';
 import 'package:paygoo/providers/order_selections_provider.dart';
@@ -71,29 +68,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         _selectedTipIndex = 3; // Select "Custom" option
       });
     }
-  }
-
-  /// Show the info bottom modal (for testing)
-  void _showInfoModal() {
-    const config = InfoModalMock.paymentFailed;
-    InfoBottomModal.show(
-      context,
-      icon: SvgPicture.asset(config.iconAsset),
-      subtitle: Text(
-        config.subtitleText ?? '',
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          letterSpacing: -0.5,
-          color: config.subtitleColor,
-          decoration: TextDecoration.none,
-        ),
-      ),
-      title: config.title,
-      description: config.description,
-      buttonLayout: ModalButtonLayout.column,
-      primaryButton: ModalButtonConfig(text: 'Try again', onPressed: () {}),
-    );
   }
 
   /// Creates an OrderCalculator with current selections state
@@ -221,51 +195,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           SectionHeader(title: "Payment Methods"),
                           SizedBox(height: 16),
                           const PaymentMethodsCard(),
-                          // SizedBox(height: 24),
-                          // // Test buttons
-                          // ElevatedButton(
-                          //   onPressed: _showInfoModal,
-                          //   child: Text('Test Info Modal'),
-                          // ),
-                          // const SizedBox(height: 12),
-                          // ElevatedButton(
-                          //   onPressed: () => Navigator.of(context).push(
-                          //     MaterialPageRoute(
-                          //       builder: (_) => PaymentResultScreen(
-                          //         config: PaymentResultConfig(
-                          //           iconAsset:
-                          //               'assets/images/icons/Icon-Successful.svg',
-                          //           title: 'Payment Successful',
-                          //           paymentResult:
-                          //               PaymentResultMock.successfulPayment,
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
-                          //   child: const Text('Test Payment Success'),
-                          // ),
-                          // const SizedBox(height: 12),
-                          // ElevatedButton(
-                          //   onPressed: () async {
-                          //     LoadingOverlay.show(context);
-                          //     // Simulate loading for 3 seconds
-                          //     await Future.delayed(const Duration(seconds: 3));
-                          //     if (context.mounted) {
-                          //       LoadingOverlay.hide(context);
-                          //     }
-                          //   },
-                          //   child: const Text('Test Loading Overlay'),
-                          // ),
-                          // const SizedBox(height: 12),
-                          // ElevatedButton(
-                          //   onPressed: () => Navigator.of(context).push(
-                          //     MaterialPageRoute(
-                          //       builder: (_) => const WelcomeScreen(),
-                          //     ),
-                          //   ),
-                          //   child: const Text('Test Welcome Screen'),
-                          // ),
-                          // SizedBox(height: 30),
                         ],
                       ),
                     ),
