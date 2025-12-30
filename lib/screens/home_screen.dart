@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:paygoo/components/atoms/section_header.dart';
 import 'package:paygoo/components/compose/order_items_cards_layout.dart';
@@ -7,21 +8,17 @@ import 'package:paygoo/components/compose/order_items_grouped_layout.dart';
 import 'package:paygoo/components/modals/custom_tip_modal.dart';
 import 'package:paygoo/components/modals/info_bottom_modal.dart';
 import 'package:paygoo/components/wrappers/bottom_summary_card.dart';
-import 'package:paygoo/components/wrappers/loading_overlay.dart';
 import 'package:paygoo/components/wrappers/order_item_card.dart';
 import 'package:paygoo/components/wrappers/overscroll_container.dart';
 import 'package:paygoo/components/wrappers/payment_methods_card.dart';
 import 'package:paygoo/components/wrappers/sticky_venue_header.dart';
 import 'package:paygoo/mocks/info_modal_mock.dart';
 import 'package:paygoo/mocks/order_items_mock.dart';
-import 'package:paygoo/mocks/payment_result_mock.dart';
 import 'package:paygoo/mocks/venue_mock.dart';
-import 'package:paygoo/models/order_item.dart';
-import 'package:paygoo/screens/payment_result_screen.dart';
-import 'package:paygoo/screens/welcome_screen.dart';
+import 'package:paygoo/providers/order_selections_provider.dart';
 import 'package:paygoo/utils/order_calculator.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({
     super.key,
     this.enableStickyVenueHeader = true,
@@ -38,13 +35,10 @@ class HomeScreen extends StatefulWidget {
   final OrderItemLayoutStyle orderItemLayoutStyle;
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  // Map of item id -> selection state
-  late Map<String, OrderItemSelection> _selections;
-
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   int? _selectedTipIndex;
   double? _customTipPercentage;
 
@@ -54,12 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize all items as unselected
-    _selections = {
-      for (final item in OrderItemsMock.items)
-        item.id: const OrderItemSelection(),
-    };
-
     _scrollController = ScrollController();
   }
 
@@ -70,10 +58,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// Show the custom tip modal
-  Future<void> _showCustomTipModal() async {
+  Future<void> _showCustomTipModal(OrderSelectionsState selectionsState) async {
+    final calculator = _createCalculator(selectionsState);
     final result = await CustomTipModal.show(
       context,
-      baseAmount: _calculator.itemTotal,
+      baseAmount: calculator.itemTotal,
       initialTipPercentage: _customTipPercentage,
     );
     if (result != null) {
@@ -107,24 +96,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Order calculator instance - creates fresh instance on each access
-  /// to reflect current state. Will work with backend data in the future.
-  OrderCalculator get _calculator => OrderCalculator(
-    items: OrderItemsMock.items, // Replace with backend items later
-    selections: _selections,
-  );
+  /// Creates an OrderCalculator with current selections state
+  OrderCalculator _createCalculator(OrderSelectionsState selectionsState) {
+    return OrderCalculator(
+      items: OrderItemsMock.items,
+      selections: selectionsState.selections,
+    );
+  }
 
   void _selectAll() {
-    // Update UI immediately
-    setState(() {
-      for (final item in OrderItemsMock.items) {
-        _selections[item.id] = OrderItemSelection(
-          isSelected: true,
-          selectedQuantity: item.availableQuantity,
-        );
-      }
-    });
-
+    ref.read(orderSelectionsProvider.notifier).selectAll(OrderItemsMock.items);
     // Run stacking haptic effect in parallel (non-blocking)
     _playStackingHaptic(OrderItemsMock.items.length);
   }
@@ -140,52 +121,52 @@ class _HomeScreenState extends State<HomeScreen> {
   /// Deselect all items and reset quantities to 1
   void _deselectAll() {
     HapticFeedback.mediumImpact();
-    setState(() {
-      for (final item in OrderItemsMock.items) {
-        _selections[item.id] = const OrderItemSelection();
-      }
-    });
+    ref
+        .read(orderSelectionsProvider.notifier)
+        .deselectAll(OrderItemsMock.items);
   }
 
   /// Builds the order items list based on the selected layout style
-  Widget _buildOrderItemsList(BuildContext context) {
+  Widget _buildOrderItemsList(
+    BuildContext context,
+    OrderSelectionsState selectionsState,
+  ) {
     if (widget.orderItemLayoutStyle == OrderItemLayoutStyle.grouped) {
-      return _buildGroupedLayout(context);
+      return _buildGroupedLayout(context, selectionsState);
     } else {
-      return _buildCardsLayout(context);
+      return _buildCardsLayout(context, selectionsState);
     }
   }
 
   void _handleSelectionChanged(String itemId, bool isSelected) {
-    setState(() {
-      final current = _selections[itemId]!;
-      _selections[itemId] = current.copyWith(
-        isSelected: isSelected,
-        selectedQuantity: isSelected ? current.selectedQuantity : 1,
-      );
-    });
+    ref
+        .read(orderSelectionsProvider.notifier)
+        .updateSelection(itemId, isSelected);
   }
 
   void _handleQuantityChanged(String itemId, int quantity) {
-    setState(() {
-      final current = _selections[itemId]!;
-      _selections[itemId] = current.copyWith(selectedQuantity: quantity);
-    });
+    ref.read(orderSelectionsProvider.notifier).updateQuantity(itemId, quantity);
   }
 
-  Widget _buildGroupedLayout(BuildContext context) {
+  Widget _buildGroupedLayout(
+    BuildContext context,
+    OrderSelectionsState selectionsState,
+  ) {
     return OrderItemsGroupedLayout(
       items: OrderItemsMock.items,
-      selections: _selections,
+      selections: selectionsState.selections,
       onSelectedChanged: _handleSelectionChanged,
       onQuantityChanged: _handleQuantityChanged,
     );
   }
 
-  Widget _buildCardsLayout(BuildContext context) {
+  Widget _buildCardsLayout(
+    BuildContext context,
+    OrderSelectionsState selectionsState,
+  ) {
     return OrderItemsCardsLayout(
       items: OrderItemsMock.items,
-      selections: _selections,
+      selections: selectionsState.selections,
       onSelectedChanged: _handleSelectionChanged,
       onQuantityChanged: _handleQuantityChanged,
     );
@@ -193,6 +174,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Watch the selections provider for reactive updates
+    final selectionsState = ref.watch(orderSelectionsProvider);
+    final calculator = _createCalculator(selectionsState);
+
     return StickyVenueHeader(
       scrollController: _scrollController,
       enableStickyHeader: widget.enableStickyVenueHeader,
@@ -206,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
               // Scrollable content with overscroll messages
               OverscrollContainer(
                 scrollController: _scrollController,
-                bottomPadding: _calculator.hasAnySelected ? 200 : 16,
+                bottomPadding: selectionsState.hasAnySelected ? 200 : 16,
                 child: Column(
                   children: [
                     // Cover image with overlapping VenueTableCard
@@ -221,16 +206,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           SectionHeader(
                             title: "Pay Your Bill",
-                            actionText: _calculator.hasAnySelected
+                            actionText: selectionsState.hasAnySelected
                                 ? "Deselect All"
                                 : "Select All",
-                            onActionTap: _calculator.hasAnySelected
+                            onActionTap: selectionsState.hasAnySelected
                                 ? _deselectAll
                                 : _selectAll,
                           ),
                           SizedBox(height: 16),
                           // Order list - layout depends on style
-                          _buildOrderItemsList(context),
+                          _buildOrderItemsList(context, selectionsState),
                           SizedBox(height: 16),
                           // Payment Methods section
                           SectionHeader(title: "Payment Methods"),
@@ -290,8 +275,8 @@ class _HomeScreenState extends State<HomeScreen> {
               // Sticky header with glass effect
               if (stickyOverlay != null) stickyOverlay,
               BottomSummaryCard(
-                isVisible: _calculator.hasAnySelected,
-                selectedItemsTotal: _calculator.itemTotal,
+                isVisible: selectionsState.hasAnySelected,
+                selectedItemsTotal: calculator.itemTotal,
                 selectedTipIndex: _selectedTipIndex,
                 customTipPercentage: _customTipPercentage,
                 onTipChanged: (index) {
@@ -299,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     _selectedTipIndex = index;
                   });
                 },
-                onCustomTipTapped: () => _showCustomTipModal(),
+                onCustomTipTapped: () => _showCustomTipModal(selectionsState),
                 onSlideCompleted: () {
                   // TODO: Handle payment
                 },

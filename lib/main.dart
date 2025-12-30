@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paygoo/components/wrappers/order_item_card.dart';
 import 'package:paygoo/screens/home_screen.dart';
 import 'package:paygoo/utils/theme/theme.dart';
 
 void main() {
-  runApp(const App());
+  runApp(const ProviderScope(child: App()));
 }
 
 class App extends StatelessWidget {
