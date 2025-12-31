@@ -165,7 +165,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               // Scrollable content with overscroll messages
               OverscrollContainer(
                 scrollController: _scrollController,
-                bottomPadding: selectionsState.hasAnySelected ? 200 : 16,
+                bottomPadding: selectionsState.hasAnySelected ? 250 : 16,
                 child: Column(
                   children: [
                     // Cover image with overlapping VenueTableCard
