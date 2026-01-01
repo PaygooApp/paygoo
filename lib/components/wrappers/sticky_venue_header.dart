@@ -2,6 +2,7 @@ import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 import 'package:paygoo/components/atoms/blurhash_image.dart';
+import 'package:paygoo/components/atoms/locale_selector.dart';
 import 'package:paygoo/components/wrappers/venu_table_card.dart';
 import 'package:paygoo/models/currency.dart';
 import 'package:paygoo/models/venue.dart';
@@ -151,6 +152,12 @@ class _StickyVenueHeaderState extends State<StickyVenueHeader>
               ),
             ),
           ),
+        // Language selector in top right corner
+        Positioned(
+          top: _topPadding + 8,
+          right: 16,
+          child: const LocaleSelector(),
+        ),
         // VenueTableCard positioned to overlap bottom of cover
         Positioned(
           left: 16,
