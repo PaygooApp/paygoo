@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:paygoo/components/wrappers/order_item_card.dart';
-import 'package:paygoo/screens/home_screen.dart';
+import 'package:paygoo/screens/token_test_screen.dart';
 import 'package:paygoo/utils/theme/theme.dart';
 
 void main() {
@@ -17,9 +16,10 @@ class App extends StatelessWidget {
       themeMode: ThemeMode.light,
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
-      home: const HomeScreen(
-        orderItemLayoutStyle: OrderItemLayoutStyle.grouped,
-      ),
+      debugShowCheckedModeBanner: false,
+      // For MVP testing, start with the token test screen
+      // In production, this will handle deep links from QR codes
+      home: const TokenTestScreen(),
     );
   }
 }
